@@ -22,7 +22,7 @@ let unsubDone = null;
 const $ = (id) => document.getElementById(id);
 const el = {
   auth: $("auth"), app: $("app"), signIn: $("sign-in"), signOut: $("sign-out"), authError: $("auth-error"),
-  issueNo: $("issue-no"), issueDate: $("issue-date"),
+  issueNo: $("issue-no"), issueDate: $("issue-date"), progress: $("week-progress"),
   weekLabel: $("week-label"), weekRange: $("week-range"),
   prev: $("prev-week"), next: $("next-week"), todayBtn: $("today-btn"),
   add: $("add-btn"), add2: $("add-btn-2"), fab: $("fab"),
@@ -107,6 +107,13 @@ function renderHeader() {
     diff === 1 ? "Następny tydzień" :
     `Tydzień ${isoWeek(thu)}`;
   el.todayBtn.disabled = diff === 0 && state.activeIdx === isoDow(today()) - 1;
+
+  // postęp tygodnia pod winietą
+  let done = 0, total = 0;
+  for (const d of weekDates()) { const st = dayStats(d); done += st.done; total += st.total; }
+  el.progress.innerHTML = total
+    ? `${esc(el.weekLabel.textContent)}: <strong>${done}</strong> z <strong>${total}</strong> wykonane`
+    : `${esc(el.weekLabel.textContent)}: brak zaplanowanych nawyków`;
 }
 
 function render() {

@@ -1,6 +1,6 @@
 {
-  "name": "Nawyki",
-  "short_name": "Nawyki",
+  "name": "Habits",
+  "short_name": "Habits",
   "description": "Tygodniowy tracker nawyków",
   "lang": "pl",
   "start_url": "./",

@@ -3,17 +3,17 @@
    ========================================================== */
 
 @font-face {
-  font-family: "Bodoni Moda";
-  src: url("../fonts/bodoni-moda.woff") format("woff");
-  font-weight: 400 900;
+  font-family: "Ultra";
+  src: url("../fonts/ultra.woff") format("woff");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Bodoni Moda";
-  src: url("../fonts/bodoni-moda-italic.woff") format("woff");
-  font-weight: 400 900;
-  font-style: italic;
+  font-family: "Young Serif";
+  src: url("../fonts/young-serif.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
   font-display: swap;
 }
 @font-face {
@@ -31,7 +31,8 @@
   --rule-heavy: 5px;
   --shadow: 6px;
   --gutter: 16px;
-  --serif: "Bodoni Moda", "Didot", "Bodoni 72", "Times New Roman", serif;
+  --display: "Ultra", "Rockwell Extra Bold", "Rockwell", Georgia, serif;
+  --serif: "Young Serif", Georgia, "Times New Roman", serif;
   --sans: "Jost", "Futura", "Century Gothic", system-ui, sans-serif;
   color-scheme: light;
 }
@@ -48,6 +49,7 @@ body {
   font-size: 16px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -88,13 +90,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .nameplate {
   margin: 0;
-  font-family: var(--serif);
-  font-variation-settings: "opsz" 96;
-  font-weight: 800;
-  font-size: clamp(76px, 19vw, 248px);
-  line-height: .86;
-  letter-spacing: -.035em;
-  padding: 14px 0 .24em;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(64px, 15vw, 200px);
+  line-height: .9;
+  letter-spacing: -.01em;
+  padding: 18px 0 .14em;
 }
 
 .deck {
@@ -104,9 +105,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border-bottom: var(--rule-heavy) double var(--ink);
   border-bottom-width: 9px;
   font-family: var(--serif);
-  font-style: italic;
   font-size: clamp(15px, 2vw, 20px);
 }
+.deck strong { font-family: var(--display); font-weight: 400; }
 
 /* ---------- Przyciski ---------- */
 
@@ -139,7 +140,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .btn-sm { min-height: 38px; padding: 0 12px; font-size: 12px; box-shadow: 3px 3px 0 var(--ink); }
 .btn-icon {
   width: 46px; padding: 0;
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 22px; letter-spacing: 0;
 }
 
@@ -187,9 +188,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .weekbar h2 {
   margin: 2px 0 0;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 500;
+  font-family: var(--display);
+    font-weight: 400;
   font-size: clamp(24px, 3.4vw, 40px);
   line-height: 1.05;
 }
@@ -232,9 +232,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .day-num {
   display: block;
-  font-family: var(--serif);
-  font-variation-settings: "opsz" 96;
-  font-weight: 700;
+  font-family: var(--display);
+  font-weight: 400;
   font-size: 64px;
   line-height: .95;
   letter-spacing: -.03em;
@@ -250,8 +249,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   position: absolute;
   right: 12px;
   bottom: 12px;
-  font-family: var(--serif);
-  font-style: italic;
+  font-family: var(--display);
   font-size: 18px;
 }
 
@@ -346,8 +344,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .index-head h2 {
   margin: 0;
-  font-family: var(--serif);
-  font-weight: 700;
+  font-family: var(--display);
+  font-weight: 400;
   font-size: clamp(32px, 4.4vw, 56px);
   line-height: 1;
   letter-spacing: -.02em;
@@ -369,8 +367,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 .index-no {
-  font-family: var(--serif);
-  font-style: italic;
+  font-family: var(--display);
   font-size: 28px;
   line-height: 1;
 }
@@ -421,13 +418,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .cover-title {
   margin: 0;
-  font-family: var(--serif);
-  font-weight: 700;
+  font-family: var(--display);
+  font-weight: 400;
   font-size: clamp(40px, 7vw, 88px);
   line-height: 1;
   letter-spacing: -.02em;
 }
-.cover-title em { font-weight: 400; }
+.cover-title em { font-family: var(--serif); font-style: normal; }
 .cover-error { min-height: 1.4em; margin: 0; font-style: italic; }
 
 /* ---------- Stopka ---------- */
@@ -481,9 +478,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .sheet-head h2 {
   margin: 0;
   padding-right: 56px;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 500;
+  font-family: var(--display);
+    font-weight: 400;
   font-size: 42px;
   line-height: 1;
 }
@@ -523,9 +519,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border: var(--rule) solid var(--ink);
   border-radius: 0;
   background: var(--paper);
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 600;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 400;
 }
 .day-toggle[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
@@ -575,9 +571,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
   .issue-line { font-size: 9.5px; letter-spacing: .16em; }
   .issue-line #issue-kind { display: none; }
-  .nameplate { padding-top: 6px; font-size: 58px; }
+  .nameplate { padding-top: 8px; font-size: 64px; }
   .deck { font-size: 13px; padding: 5px 0 6px; border-bottom-width: 7px; }
-  .weekbar h2 { font-size: 26px; }
+  .weekbar h2 { font-size: 19px; line-height: 1.15; }
 
   .weekbar { margin: 14px 0 12px; gap: 8px; }
   .add-desktop { display: none; }
@@ -600,7 +596,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
     border-radius: 0;
   }
   .strip-dow { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
-  .strip-num { font-family: var(--serif); font-weight: 700; font-size: 22px; line-height: 1.05; }
+  .strip-num { font-family: var(--display); font-weight: 400; font-size: 22px; line-height: 1.05; }
   .strip-day.is-today .strip-num { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
   .strip-day.is-complete::after {
     content: "";

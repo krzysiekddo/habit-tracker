@@ -1,6 +1,8 @@
-# Nawyki — tygodniowy tracker nawyków
+# Habits — tygodniowy tracker nawyków
 
-Czarno-biały tracker w stylu starego magazynu modowego (Bodoni Moda + Jost).
+**Adres:** https://krzysiekddo.github.io/habit-tracker/
+
+Czarno-biały tracker w stylu starej gazety (Ultra + Young Serif + Jost).
 Czysty HTML/CSS/JS bez budowania — hostowany za darmo na GitHub Pages,
 dane w Firebase (logowanie Google, synchronizacja telefon ↔ komputer, działa offline).
 
@@ -16,7 +18,7 @@ js/store-firebase.js    zapis w Firebase
 js/firebase-config.js   ← TU wklejasz klucze Firebase
 firestore.rules         reguły bezpieczeństwa bazy (wklejasz w konsoli Firebase)
 sw.js, manifest...      PWA — instalacja na ekranie głównym telefonu, praca offline
-fonts/, icons/          czcionki (licencja OFL) i ikony
+fonts/, icons/          czcionki (OFL / Apache) i ikony
 ```
 
 Dopóki `firebase-config.js` jest pusty, aplikacja działa w **trybie lokalnym**
@@ -39,7 +41,7 @@ Dopóki `firebase-config.js` jest pusty, aplikacja działa w **trybie lokalnym**
    (bez Firebase Hosting) → skopiuj obiekt `firebaseConfig` i wklej jego wartości
    do `js/firebase-config.js`.
 6. Po założeniu strony na GitHubie (krok 2): **Authentication → Settings → Authorized domains**
-   → *Add domain* → `TWÓJLOGIN.github.io`.
+   → *Add domain* → `krzysiekddo.github.io`.
 
 Plan Spark (darmowy) w zupełności wystarcza; nie wymaga karty.
 
@@ -54,7 +56,7 @@ Najprościej przez **GitHub Desktop** (ma git w środku, nie trzeba terminala):
    publicznego repo — dane i tak są chronione przez Firebase) → *Publish*.
 4. Na github.com w repo: **Settings → Pages** → *Source: Deploy from a branch*
    → branch `main`, folder `/ (root)` → *Save*.
-5. Po ~1 minucie strona działa pod `https://TWÓJLOGIN.github.io/NAZWA-REPO/`.
+5. Po ~1 minucie strona działa pod **https://krzysiekddo.github.io/habit-tracker/**
 
 Każda późniejsza zmiana: GitHub Desktop → *Commit to main* → *Push origin*.
 
@@ -67,4 +69,4 @@ Otwórz adres strony → zaloguj się Google →
 ## Aktualizacje a pamięć offline
 
 Service worker zawsze najpierw pobiera świeżą wersję z sieci, więc zmiany widać
-po odświeżeniu. Przy większych zmianach podbij `CACHE = "nawyki-v1"` w `sw.js`.
+po odświeżeniu. Przy większych zmianach podbij `CACHE = "habits-v2"` w `sw.js`.

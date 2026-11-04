@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Nawyki</title>
+  <title>Habits</title>
   <meta name="description" content="Tygodniowy tracker nawyków">
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="manifest.webmanifest">
@@ -12,8 +12,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Nawyki">
-  <link rel="preload" href="fonts/bodoni-moda.woff" as="font" type="font/woff" crossorigin>
+  <meta name="apple-mobile-web-app-title" content="Habits">
+  <link rel="preload" href="fonts/ultra.woff" as="font" type="font/woff" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -24,14 +24,14 @@
         <span id="issue-no">Nr —</span>
         <span id="issue-date">—</span>
       </div>
-      <h1 class="nameplate">Nawyki</h1>
-      <p class="deck">Kronika dobrych przyzwyczajeń</p>
+      <h1 class="nameplate">Habits</h1>
+      <p class="deck" id="week-progress" aria-live="polite">&nbsp;</p>
     </header>
 
     <!-- Ekran logowania (tylko w trybie Firebase) -->
     <section id="auth" class="cover" hidden>
-      <p class="cover-kicker">Wydanie specjalne</p>
-      <h2 class="cover-title">Zaloguj się,<br><em>by otworzyć tydzień.</em></h2>
+      <p class="cover-kicker">Habits</p>
+      <h2 class="cover-title">Zaloguj się,<br><em>by zobaczyć swój tydzień.</em></h2>
       <button id="sign-in" class="btn btn-primary btn-lg" type="button">Zaloguj przez Google</button>
       <p id="auth-error" class="cover-error" role="alert"></p>
     </section>

@@ -1,11 +1,11 @@
 // Service worker: aplikacja działa offline.
 // Pliki strony: najpierw sieć (zawsze świeża wersja), w razie braku — kopia z pamięci.
 // Biblioteki Firebase z gstatic: najpierw pamięć (wersja jest przypięta, więc się nie zmienia).
-const CACHE = "nawyki-v1";
+const CACHE = "habits-v2";
 const SHELL = [
   "./", "index.html", "css/styles.css", "manifest.webmanifest",
   "js/app.js", "js/dates.js", "js/firebase-config.js", "js/store-local.js", "js/store-firebase.js",
-  "fonts/bodoni-moda.woff", "fonts/bodoni-moda-italic.woff", "fonts/jost.woff",
+  "fonts/ultra.woff", "fonts/young-serif.woff", "fonts/jost.woff",
   "icons/icon-192.png", "icons/apple-touch-icon.png",
 ];
 
