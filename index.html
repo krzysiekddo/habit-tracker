@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Nawyki</title>
+  <meta name="description" content="Tygodniowy tracker nawyków">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Nawyki">
+  <link rel="preload" href="fonts/bodoni-moda.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <div class="issue-line">
+        <span id="issue-kind">Wydanie tygodniowe</span>
+        <span id="issue-no">Nr —</span>
+        <span id="issue-date">—</span>
+      </div>
+      <h1 class="nameplate">Nawyki</h1>
+      <p class="deck">Kronika dobrych przyzwyczajeń</p>
+    </header>
+
+    <!-- Ekran logowania (tylko w trybie Firebase) -->
+    <section id="auth" class="cover" hidden>
+      <p class="cover-kicker">Wydanie specjalne</p>
+      <h2 class="cover-title">Zaloguj się,<br><em>by otworzyć tydzień.</em></h2>
+      <button id="sign-in" class="btn btn-primary btn-lg" type="button">Zaloguj przez Google</button>
+      <p id="auth-error" class="cover-error" role="alert"></p>
+    </section>
+
+    <main id="app" hidden>
+      <nav class="weekbar" aria-label="Nawigacja tygodnia">
+        <button class="btn btn-icon" id="prev-week" type="button" aria-label="Poprzedni tydzień">←</button>
+        <div class="weekbar-title">
+          <span class="weekbar-label" id="week-label">Ten tydzień</span>
+          <h2 id="week-range">—</h2>
+        </div>
+        <button class="btn btn-icon" id="next-week" type="button" aria-label="Następny tydzień">→</button>
+        <button class="btn" id="today-btn" type="button">Dziś</button>
+        <button class="btn btn-primary add-desktop" id="add-btn" type="button">+ Nowy nawyk</button>
+      </nav>
+
+      <div class="strip" id="strip" role="tablist" aria-label="Dni tygodnia"></div>
+
+      <div class="week" id="week"></div>
+
+      <section class="index" aria-labelledby="index-title">
+        <div class="index-head">
+          <h2 id="index-title">Spis nawyków</h2>
+          <button class="btn btn-sm" id="add-btn-2" type="button">+ Dodaj</button>
+        </div>
+        <ol class="index-list" id="index-list"></ol>
+      </section>
+    </main>
+
+    <footer class="colophon">
+      <span id="mode-note"></span>
+      <button class="link" id="sign-out" type="button" hidden>Wyloguj</button>
+    </footer>
+  </div>
+
+  <button class="fab" id="fab" type="button" aria-label="Dodaj nawyk" hidden>+</button>
+
+  <dialog class="sheet" id="habit-dialog" aria-labelledby="dialog-title">
+    <form method="dialog" id="habit-form" novalidate>
+      <header class="sheet-head">
+        <p class="sheet-kicker" id="dialog-kicker">Nowa rubryka</p>
+        <h2 id="dialog-title">Nowy nawyk</h2>
+        <button class="btn btn-icon sheet-close" type="button" id="dialog-close" aria-label="Zamknij">✕</button>
+      </header>
+
+      <label class="field">
+        <span class="field-label">Nazwa</span>
+        <input id="habit-name" name="name" type="text" maxlength="60" autocomplete="off" placeholder="np. Poranny spacer" required>
+      </label>
+
+      <fieldset class="field">
+        <legend class="field-label">Dni</legend>
+        <div class="days-picker" id="days-picker"></div>
+        <div class="presets">
+          <button type="button" class="chip" data-preset="1,2,3,4,5,6,7">Codziennie</button>
+          <button type="button" class="chip" data-preset="1,2,3,4,5">Dni robocze</button>
+          <button type="button" class="chip" data-preset="6,7">Weekend</button>
+        </div>
+      </fieldset>
+
+      <p class="form-error" id="form-error" role="alert"></p>
+
+      <footer class="sheet-actions">
+        <button class="btn btn-danger" type="button" id="delete-btn" hidden>Usuń</button>
+        <span class="spacer"></span>
+        <button class="btn" type="button" id="cancel-btn">Anuluj</button>
+        <button class="btn btn-primary" type="submit" id="save-btn">Zapisz</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+# Nawyki — tygodniowy tracker nawyków
+
+Czarno-biały tracker w stylu starego magazynu modowego (Bodoni Moda + Jost).
+Czysty HTML/CSS/JS bez budowania — hostowany za darmo na GitHub Pages,
+dane w Firebase (logowanie Google, synchronizacja telefon ↔ komputer, działa offline).
+
+## Struktura
+
+```
+index.html              strona
+css/styles.css          cały wygląd
+js/app.js               logika interfejsu
+js/dates.js             daty (tydzień od poniedziałku)
+js/store-local.js       zapis w przeglądarce (tryb lokalny)
+js/store-firebase.js    zapis w Firebase
+js/firebase-config.js   ← TU wklejasz klucze Firebase
+firestore.rules         reguły bezpieczeństwa bazy (wklejasz w konsoli Firebase)
+sw.js, manifest...      PWA — instalacja na ekranie głównym telefonu, praca offline
+fonts/, icons/          czcionki (licencja OFL) i ikony
+```
+
+Dopóki `firebase-config.js` jest pusty, aplikacja działa w **trybie lokalnym**
+(dane tylko w tej jednej przeglądarce).
+
+> Uwaga: plik `index.html` otwarty dwuklikiem (file://) nie zadziała — przeglądarki
+> blokują wtedy moduły JS. Aplikację oglądaj przez GitHub Pages (albo lokalny serwer).
+
+---
+
+## Krok 1 — Firebase (baza + logowanie)
+
+1. Wejdź na https://console.firebase.google.com → **Dodaj projekt** → nazwa np. `nawyki`
+   (Google Analytics możesz wyłączyć).
+2. **Authentication** → *Rozpocznij* → zakładka *Sign-in method* → **Google** → włącz → zapisz.
+3. **Firestore Database** → *Utwórz bazę danych* → lokalizacja `europe-central2 (Warszawa)`
+   → tryb **produkcyjny**.
+4. W Firestore zakładka **Reguły** → wklej zawartość pliku `firestore.rules` → *Opublikuj*.
+5. ⚙ **Ustawienia projektu** → *Twoje aplikacje* → ikona **`</>`** (Web) → nazwa `Nawyki`
+   (bez Firebase Hosting) → skopiuj obiekt `firebaseConfig` i wklej jego wartości
+   do `js/firebase-config.js`.
+6. Po założeniu strony na GitHubie (krok 2): **Authentication → Settings → Authorized domains**
+   → *Add domain* → `TWÓJLOGIN.github.io`.
+
+Plan Spark (darmowy) w zupełności wystarcza; nie wymaga karty.
+
+## Krok 2 — GitHub Pages (hosting)
+
+Najprościej przez **GitHub Desktop** (ma git w środku, nie trzeba terminala):
+
+1. Zainstaluj https://desktop.github.com i zaloguj się swoim kontem GitHub.
+2. *File → Add local repository* → wskaż ten folder → kliknij **create a repository**
+   → *Create repository*.
+3. **Publish repository** → odznacz *Keep this code private* (darmowe Pages wymagają
+   publicznego repo — dane i tak są chronione przez Firebase) → *Publish*.
+4. Na github.com w repo: **Settings → Pages** → *Source: Deploy from a branch*
+   → branch `main`, folder `/ (root)` → *Save*.
+5. Po ~1 minucie strona działa pod `https://TWÓJLOGIN.github.io/NAZWA-REPO/`.
+
+Każda późniejsza zmiana: GitHub Desktop → *Commit to main* → *Push origin*.
+
+## Krok 3 — telefon
+
+Otwórz adres strony → zaloguj się Google →
+- **Android (Chrome):** menu ⋮ → *Dodaj do ekranu głównego* / *Zainstaluj aplikację*.
+- **iPhone (Safari):** przycisk *Udostępnij* → *Do ekranu początkowego*.
+
+## Aktualizacje a pamięć offline
+
+Service worker zawsze najpierw pobiera świeżą wersję z sieci, więc zmiany widać
+po odświeżeniu. Przy większych zmianach podbij `CACHE = "nawyki-v1"` w `sw.js`.
