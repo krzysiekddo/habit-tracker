@@ -934,3 +934,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .is-reordering, .is-reordering * { cursor: grabbing !important; }
 [data-skin="szklo"] .index-row[data-id] { background: transparent; }
 [data-skin="szklo"] .index-row.is-dragging { background: var(--card); -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); }
+
+/* suwak koloru (Szkło, Pastel) */
+.hue-ctl input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, hsl(0 85% 62%), hsl(60 85% 55%), hsl(120 70% 50%), hsl(180 75% 50%), hsl(240 80% 65%), hsl(300 80% 62%), hsl(360 85% 62%));
+}
+.hue-ctl input[type="range"]::-moz-range-track {
+  background: linear-gradient(90deg, hsl(0 85% 62%), hsl(60 85% 55%), hsl(120 70% 50%), hsl(180 75% 50%), hsl(240 80% 65%), hsl(300 80% 62%), hsl(360 85% 62%));
+}
+.hue-ctl input[type="range"]::-moz-range-progress { background: transparent; }
+.hue-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); background: var(--accent); }
+.hue-ctl + .glass-ctl { margin-top: 10px; border-top: 0; padding-top: 0; }

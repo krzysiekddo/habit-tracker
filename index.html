@@ -29,6 +29,11 @@
       var g = null;
       try { g = localStorage.getItem("habits:glass"); } catch (e) {}
       if (g !== null && !isNaN(+g)) document.documentElement.style.setProperty("--glass-t", String(1 - (+g) / 100));
+      ["szklo", "pastel"].forEach(function (k) {
+        var h = null;
+        try { h = localStorage.getItem("habits:hue:" + k); } catch (e) {}
+        if (h !== null && !isNaN(+h)) document.documentElement.style.setProperty("--hue-" + k, h);
+      });
     })();
   </script>
 </head>
@@ -109,6 +114,13 @@
         <button class="btn btn-icon sheet-close" type="button" id="skin-close" aria-label="Zamknij" data-i18n-aria="close">✕</button>
       </header>
       <div class="skin-list" id="skin-list"></div>
+      <label class="glass-ctl hue-ctl" id="hue-ctl" hidden>
+        <span class="glass-ctl-head">
+          <span class="field-label" data-i18n="hueLabel">Kolor</span>
+          <span class="hue-dot" id="hue-dot"></span>
+        </span>
+        <input type="range" id="hue-range" min="0" max="360" step="1" value="220">
+      </label>
       <label class="glass-ctl" id="glass-ctl" hidden>
         <span class="glass-ctl-head">
           <span class="field-label" data-i18n="glassLabel">Przezroczystość szkła</span>

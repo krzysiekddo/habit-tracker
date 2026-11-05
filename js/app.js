@@ -709,7 +709,29 @@ function applyGlass(v, save) {
 applyGlass(readGlass(), false);
 glassRange.addEventListener("input", () => applyGlass(Number(glassRange.value), true));
 
+const HUE_DEFAULT = { szklo: 220, pastel: 255 };
+const hueCtl = document.getElementById("hue-ctl");
+const hueRange = document.getElementById("hue-range");
+function readHue(skin) {
+  try { const h = localStorage.getItem("habits:hue:" + skin); if (h !== null && !isNaN(+h)) return +h; } catch { /* ignoruj */ }
+  return HUE_DEFAULT[skin];
+}
+function syncHueCtl() {
+  const skin = currentSkin();
+  hueCtl.hidden = !(skin in HUE_DEFAULT);
+  if (!hueCtl.hidden) hueRange.value = String(readHue(skin));
+}
+hueRange.addEventListener("input", () => {
+  const skin = currentSkin();
+  if (!(skin in HUE_DEFAULT)) return;
+  document.documentElement.style.setProperty(`--hue-${skin}`, hueRange.value);
+  try { localStorage.setItem("habits:hue:" + skin, hueRange.value); } catch { /* ignoruj */ }
+  syncThemeColor();
+  renderSkins();
+});
+
 function renderSkins() {
+  syncHueCtl();
   glassCtl.hidden = currentSkin() !== "szklo";
   const mode = document.documentElement.dataset.theme || "light";
   const cur = currentSkin();

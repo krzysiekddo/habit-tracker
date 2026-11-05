@@ -99,9 +99,10 @@
    3. PASTEL — zaokrąglony, miękkie cienie, lawenda
    ========================================================== */
 [data-skin="pastel"] {
-  --paper: #fff6ef; --card: #ffffff; --ink: #2d2340; --line: #2d2340;
-  --accent: #b9a2ff; --on-accent: #2d2340; --accent-line: #2d2340;
-  --veil: rgba(255, 246, 239, .8);
+  --h: var(--hue-pastel, 255);
+  --paper: hsl(var(--h) 80% 97%); --card: #ffffff; --ink: hsl(var(--h) 30% 20%); --line: hsl(var(--h) 30% 20%);
+  --accent: hsl(var(--h) 100% 82%); --on-accent: hsl(var(--h) 30% 20%); --accent-line: hsl(var(--h) 30% 20%);
+  --veil: hsl(var(--h) 80% 97% / .8);
   --display: "Fredoka", "Nunito", system-ui, sans-serif;
   --display-weight: 600; --display-case: none;
   --serif: "Nunito", system-ui, sans-serif;
@@ -121,9 +122,9 @@
   color-scheme: light;
 }
 [data-skin="pastel"][data-theme="dark"] {
-  --paper: #1c1726; --card: #261f33; --ink: #f1eafe; --line: #5b4e78;
-  --accent: #b9a2ff; --on-accent: #1c1726; --accent-line: #b9a2ff;
-  --veil: rgba(28, 23, 38, .8);
+  --paper: hsl(var(--h) 25% 12%); --card: hsl(var(--h) 24% 16%); --ink: hsl(var(--h) 90% 96%); --line: hsl(var(--h) 22% 39%);
+  --accent: hsl(var(--h) 100% 82%); --on-accent: hsl(var(--h) 25% 12%); --accent-line: hsl(var(--h) 100% 82%);
+  --veil: hsl(var(--h) 25% 12% / .8);
   --shadow-xs: 0 3px 8px rgba(0, 0, 0, .35);
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, .4);
   --shadow-sm-hover: 0 8px 18px rgba(0, 0, 0, .45);
@@ -142,11 +143,12 @@
    ========================================================== */
 [data-skin="szklo"] {
   --glass-t: .5;
-  --paper: #9fc1e8;
-  --card: rgba(255, 255, 255, calc(.06 + var(--glass-t) * .62));
-  --ink: #0b1730; --line: rgba(255, 255, 255, .55);
-  --accent: rgba(10, 22, 52, .78); --on-accent: #fff; --accent-line: rgba(255, 255, 255, .55);
-  --veil: rgba(160, 190, 230, .18);
+  --h: var(--hue-szklo, 220);
+  --paper: hsl(var(--h) 60% 76%);
+  --card: hsl(var(--h) 90% 97% / calc(.06 + var(--glass-t) * .62));
+  --ink: hsl(var(--h) 60% 12%); --line: rgba(255, 255, 255, .55);
+  --accent: hsl(var(--h) 65% 14% / .8); --on-accent: #fff; --accent-line: rgba(255, 255, 255, .55);
+  --veil: hsl(var(--h) 60% 76% / .18);
   --backdrop: url("https://images.unsplash.com/photo-1611324022422-cc8127689691?auto=format&fit=crop&w=2400&q=70"),
               linear-gradient(180deg, #7fb2ec 0%, #c9dcf3 60%, #8a9bb3 100%);
   --glass: blur(calc(4px + var(--glass-t) * 26px)) saturate(190%) brightness(1.04);
@@ -171,11 +173,11 @@
   color-scheme: light;
 }
 [data-skin="szklo"][data-theme="dark"] {
-  --paper: #0a1424;
-  --card: rgba(18, 24, 44, calc(.06 + var(--glass-t) * .6));
-  --ink: #f1f4ff; --line: rgba(255, 255, 255, .2);
-  --accent: rgba(255, 255, 255, .9); --on-accent: #0b1428; --accent-line: rgba(255, 255, 255, .7);
-  --veil: rgba(3, 8, 20, .3);
+  --paper: hsl(var(--h) 55% 9%);
+  --card: hsl(var(--h) 42% 12% / calc(.06 + var(--glass-t) * .6));
+  --ink: hsl(var(--h) 100% 97%); --line: rgba(255, 255, 255, .2);
+  --accent: hsl(var(--h) 100% 94% / .92); --on-accent: hsl(var(--h) 55% 10%); --accent-line: rgba(255, 255, 255, .7);
+  --veil: hsl(var(--h) 60% 5% / .3);
   --backdrop: url("https://images.unsplash.com/photo-1767908853602-26e1787c7db4?auto=format&fit=crop&w=2400&q=70"),
               linear-gradient(180deg, #050b18 0%, #12324a 70%, #0a1424 100%);
   --sheen: linear-gradient(140deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, .03) 38%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, .06) 100%);
