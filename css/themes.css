@@ -202,12 +202,12 @@
 }
 /* nagłówek, spis i stopka dostają własne szklane panele, żeby tekst był czytelny na tle zdjęcia */
 [data-skin="szklo"] :is(.masthead, .index, .colophon, .cover) {
-  margin-top: 16px;
+  margin-top: calc(16px * var(--d, 1));
   padding: 14px 18px 16px;
   background-color: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--glass-edge), 0 4px 14px var(--panel-shadow);
 }
 [data-skin="szklo"] .weekbar-title {
   padding: 6px 10px 8px;
@@ -216,7 +216,9 @@
   box-shadow: var(--shadow-xs);
 }
 [data-skin="szklo"] .masthead { padding-top: 12px; }
-[data-skin="szklo"] .index { margin-top: 40px; }
+[data-skin="szklo"] .index { margin-top: calc(28px * var(--d, 1)); }
+[data-skin="szklo"] { --panel-shadow: rgba(5, 15, 40, .07); }
+[data-skin="szklo"][data-theme="dark"] { --panel-shadow: rgba(0, 0, 0, .18); }
 [data-skin="szklo"] .index-row:last-child { border-bottom: 0; }
 [data-skin="szklo"] .nameplate { letter-spacing: -.045em; }
 [data-skin="szklo"] .deck { border-bottom: 0; padding-bottom: 0; }  /* bez podwójnej linii pod licznikiem */
@@ -259,3 +261,7 @@
 @media (min-width: 761px) {
   [data-skin="szklo"] .issue-line { min-height: 60px; align-items: flex-start; padding-top: 16px; padding-bottom: 0; }
 }
+
+/* Szkło: karty dnia z lekkim cieniem (duży cień był ucinany przez przewijany pas kart i tworzył ciemny pas) */
+[data-skin="szklo"] .day { box-shadow: var(--glass-edge), 0 4px 14px var(--panel-shadow); }
+@media (max-width: 760px) { [data-skin="szklo"] .week { padding-bottom: 18px; margin-bottom: -6px; } }
