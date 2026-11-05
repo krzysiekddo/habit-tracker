@@ -77,6 +77,11 @@ export async function updateHabit(id, patch) {
   save();
 }
 
+export async function reorderHabits(ids) {
+  ids.forEach((id, i) => { const h = data.habits.find((x) => x.id === id); if (h) h.order = i + 1; });
+  save();
+}
+
 export async function deleteHabit(id) {
   data.habits = data.habits.filter((h) => h.id !== id);
   for (const k of Object.keys(data.done)) if (k.startsWith(id + "|")) delete data.done[k];

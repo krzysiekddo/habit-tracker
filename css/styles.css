@@ -911,3 +911,26 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .index-events { margin-top: 44px; }
 .index-events .index-head h2 { font-size: clamp(28px, 3.6vw, 44px); }
 @media (max-width: 760px) { .index-events .index-head .btn { display: inline-flex; } }
+
+/* ---------- zmiana kolejności nawyków ---------- */
+.index-row[data-id] {
+  position: relative;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition: transform .18s ease;
+  background: var(--paper);
+}
+.index-row.is-pressing { transform: scale(.985); }
+.index-row.is-dragging {
+  z-index: 5;
+  cursor: grabbing;
+  transition: none;
+  background: var(--card);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-sm);
+}
+.is-reordering, .is-reordering * { cursor: grabbing !important; }
+[data-skin="szklo"] .index-row[data-id] { background: transparent; }
+[data-skin="szklo"] .index-row.is-dragging { background: var(--card); -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass); }

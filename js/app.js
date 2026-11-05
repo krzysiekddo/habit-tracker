@@ -25,6 +25,10 @@ function tickIntro() {
   else { document.documentElement.classList.remove("intro"); motion.introStart = 0; }
 }
 
+// przeciąganie nawyków w spisie — patrz sekcja „zmiana kolejności”
+const drag = { row: null, pointerId: null, type: "", startX: 0, startY: 0, startScroll: 0, lastY: 0,
+  timer: 0, active: false, pending: false, rows: [], slots: [], from: 0, to: 0, raf: 0 };
+
 // animacja wejścia — patrz playIntro()
 let introTimer = 0;
 let started = false;
@@ -236,6 +240,7 @@ function renderStrip() {
 }
 
 function renderIndex() {
+  if (drag.active) { drag.pending = true; return; }   // nie przerywamy przeciągania
   if (!state.habits.length) {
     el.index.innerHTML = `<li class="index-empty">${t("indexEmpty")}</li>`;
     el.eventsSection.hidden = true;
@@ -254,7 +259,7 @@ function renderIndex() {
     return s ? ` is-new" style="--anim-shift:${s}` : "";
   };
   const habitRow = (h, i) => `
-    <li class="index-row${freshAttr(h)}">
+    <li class="index-row${freshAttr(h)}" data-id="${esc(h.id)}">
       <span class="index-no">${String(i + 1).padStart(2, "0")}</span>
       <span class="index-name">${esc(h.name)}</span>
       <span class="index-days" aria-label="${t("daysAria", { d: h.days.map((d) => N().short[d - 1]).join(", ") })}">
@@ -279,6 +284,124 @@ function renderIndex() {
     : `<li class="index-empty">${t("noRecurring")}</li>`;
   el.eventsSection.hidden = !events.length;
   el.events.innerHTML = [...upcoming, ...past].map(eventRow).join("");
+}
+
+// ---------- zmiana kolejności nawyków (przeciąganie) ----------
+// Komputer: złap myszką i przesuń. Telefon: przytrzymaj palcem ~0,4 s i przesuń.
+el.index.addEventListener("pointerdown", (e) => {
+  const row = e.target.closest(".index-row[data-id]");
+  if (!row || e.target.closest("button") || drag.row) return;
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  Object.assign(drag, { row, pointerId: e.pointerId, type: e.pointerType, startX: e.clientX, startY: e.clientY,
+    lastY: e.clientY, startScroll: window.scrollY, active: false, pending: false });
+  if (e.pointerType === "mouse") e.preventDefault();          // bez zaznaczania tekstu
+  else {
+    row.classList.add("is-pressing");
+    drag.timer = setTimeout(beginDrag, 380);
+  }
+});
+
+window.addEventListener("pointermove", (e) => {
+  if (!drag.row || e.pointerId !== drag.pointerId) return;
+  drag.lastY = e.clientY;
+  if (!drag.active) {
+    const moved = Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY);
+    if (drag.type === "mouse") { if (moved > 4) beginDrag(); else return; }
+    else { if (moved > 8) resetDrag(); return; }               // palec ruszył przed czasem = zwykłe przewijanie
+  }
+  updateDrag();
+});
+window.addEventListener("pointerup", (e) => { if (e.pointerId === drag.pointerId) endDrag(); });
+window.addEventListener("pointercancel", (e) => { if (e.pointerId === drag.pointerId) endDrag(); });
+// w trakcie przeciągania na telefonie blokujemy przewijanie strony i menu długiego przytrzymania
+document.addEventListener("touchmove", (e) => { if (drag.active) e.preventDefault(); }, { passive: false });
+el.index.addEventListener("contextmenu", (e) => { if (drag.row) e.preventDefault(); });
+
+function beginDrag() {
+  clearTimeout(drag.timer);
+  if (!drag.row) return;
+  drag.active = true;
+  drag.rows = [...el.index.querySelectorAll(".index-row[data-id]")];
+  drag.from = drag.to = drag.rows.indexOf(drag.row);
+  drag.slots = drag.rows.map((r) => { const b = r.getBoundingClientRect(); return { top: b.top + window.scrollY, h: b.height }; });
+  drag.row.classList.remove("is-pressing");
+  drag.row.classList.add("is-dragging");
+  document.body.classList.add("is-reordering");
+  if (navigator.vibrate && drag.type !== "mouse") navigator.vibrate(12);
+  autoScroll();
+}
+
+function updateDrag() {
+  const dy = (drag.lastY + window.scrollY) - (drag.startY + drag.startScroll);
+  const me = drag.slots[drag.from];
+  // nie wychodzimy poza listę
+  const minDy = drag.slots[0].top - me.top;
+  const last = drag.slots[drag.slots.length - 1];
+  const maxDy = last.top + last.h - (me.top + me.h);
+  const y = Math.max(minDy, Math.min(maxDy, dy));
+  drag.row.style.transform = `translateY(${y}px)`;
+  const center = me.top + me.h / 2 + y;
+  let to = drag.from;
+  drag.slots.forEach((s, i) => {
+    const c = s.top + s.h / 2;
+    if (i > drag.from && center > c) to = i;
+    if (i < drag.from && center < c && i < to) to = i;
+  });
+  drag.to = to;
+  drag.rows.forEach((r, i) => {
+    if (r === drag.row) return;
+    let shift = 0;
+    if (drag.from < to && i > drag.from && i <= to) shift = -me.h;
+    if (drag.from > to && i >= to && i < drag.from) shift = me.h;
+    r.style.transform = shift ? `translateY(${shift}px)` : "";
+  });
+  // numery na bieżąco zgodne z nową kolejnością
+  const order = drag.rows.slice();
+  order.splice(drag.to, 0, order.splice(drag.from, 1)[0]);
+  order.forEach((r, i) => { const no = r.querySelector(".index-no"); if (no) no.textContent = String(i + 1).padStart(2, "0"); });
+}
+
+// przewijanie strony, gdy palec / kursor jest przy krawędzi ekranu
+function autoScroll() {
+  cancelAnimationFrame(drag.raf);
+  if (!drag.active) return;
+  const edge = 80, h = window.innerHeight;
+  let v = 0;
+  if (drag.lastY < edge) v = -Math.ceil((edge - drag.lastY) / 6);
+  else if (drag.lastY > h - edge) v = Math.ceil((drag.lastY - (h - edge)) / 6);
+  if (v) { window.scrollBy(0, v); updateDrag(); }
+  drag.raf = requestAnimationFrame(autoScroll);
+}
+
+function endDrag() {
+  clearTimeout(drag.timer);
+  cancelAnimationFrame(drag.raf);
+  if (!drag.row) return;
+  const wasActive = drag.active;
+  const { from, to, rows } = drag;
+  drag.row.classList.remove("is-pressing", "is-dragging");
+  document.body.classList.remove("is-reordering");
+  rows.forEach((r) => { r.style.transform = ""; });
+  drag.row = null; drag.active = false;
+  if (wasActive && from !== to) {
+    const ids = rows.map((r) => r.dataset.id);
+    ids.splice(to, 0, ids.splice(from, 1)[0]);
+    // od razu w interfejsie…
+    const pos = new Map(ids.map((id, i) => [id, i + 1]));
+    state.habits = state.habits.map((h) => (pos.has(h.id) ? { ...h, order: pos.get(h.id) } : h))
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    render();
+    // …i zapis
+    Promise.resolve(store.reorderHabits(ids)).catch((err) => console.error("Zapis kolejności nieudany", err));
+  } else if (drag.pending || wasActive) {
+    renderIndex();
+  }
+  drag.pending = false;
+}
+function resetDrag() {
+  clearTimeout(drag.timer);
+  drag.row?.classList.remove("is-pressing");
+  drag.row = null; drag.active = false;
 }
 
 // ---------- odhaczanie ----------

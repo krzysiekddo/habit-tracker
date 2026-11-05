@@ -88,6 +88,12 @@ export function updateHabit(id, patch) {
   return updateDoc(doc(habitsCol(), id), patch);
 }
 
+export function reorderHabits(ids) {
+  const batch = writeBatch(db);
+  ids.forEach((id, i) => batch.update(doc(habitsCol(), id), { order: i + 1 }));
+  return batch.commit();
+}
+
 export async function deleteHabit(id) {
   await deleteDoc(doc(habitsCol(), id));
   const snap = await getDocs(query(doneCol(), where("habitId", "==", id)));
