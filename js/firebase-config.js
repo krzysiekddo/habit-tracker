@@ -10,10 +10,10 @@
 //  Twoje dane chronią reguły Firestore (plik firestore.rules).
 // ─────────────────────────────────────────────────────────────
 export const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyDZUAVF1vlF4CmBKioBG9he9lGg6Rvo7Ko",
+  authDomain: "nawyki-93d76.firebaseapp.com",
+  projectId: "nawyki-93d76",
+  storageBucket: "nawyki-93d76.firebasestorage.app",
+  messagingSenderId: "253322286392",
+  appId: "1:253322286392:web:13ee63e66e9ab9f658ddcd",
 };
