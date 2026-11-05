@@ -453,12 +453,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .index-date {
   display: grid;
   justify-items: start;
+  white-space: nowrap;
   font-family: var(--sans);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
 }
+@media (max-width: 760px) { .index-date { letter-spacing: .04em; } }
 .index-date b { font-family: var(--display);
   font-weight: var(--display-weight);
   text-transform: var(--display-case); font-size: 28px; letter-spacing: 0; line-height: 1; }
@@ -874,7 +876,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .index { margin-top: 44px; }
   .index-head .btn { display: none; }
   .index-row {
-    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
     grid-template-areas: "no name edit" "no days edit";
     row-gap: 8px;
   }
