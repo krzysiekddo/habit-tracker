@@ -783,6 +783,17 @@ langBtn.addEventListener("click", () => {
 });
 refreshLang();
 
+// ---------- paralaksa tła (motyw Szkło) ----------
+let parallaxRaf = 0;
+window.addEventListener("scroll", () => {
+  if (document.documentElement.dataset.skin !== "szklo") return;
+  cancelAnimationFrame(parallaxRaf);
+  parallaxRaf = requestAnimationFrame(() => {
+    const py = Math.min(window.scrollY * 0.15, window.innerHeight * 0.3);
+    document.documentElement.style.setProperty("--parallax", `${py.toFixed(1)}px`);
+  });
+}, { passive: true });
+
 // ---------- PWA ----------
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});

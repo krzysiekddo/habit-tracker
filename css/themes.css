@@ -248,3 +248,10 @@
   background-size: cover;
   background-position: center;
 }
+
+/* Szkło: tło przewija się wolniej niż strona (paralaksa) */
+[data-skin="szklo"] body::before {
+  bottom: -30vh;
+  transform: translate3d(0, calc(var(--parallax, 0px) * -1), 0);
+  will-change: transform;
+}
