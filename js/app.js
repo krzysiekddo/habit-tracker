@@ -25,6 +25,10 @@ function tickIntro() {
   else { document.documentElement.classList.remove("intro"); motion.introStart = 0; }
 }
 
+// animacja wejścia — patrz playIntro()
+let introTimer = 0;
+let started = false;
+
 // przewijanie programowe kart dnia (telefon) — patrz scrollToActive()
 let scrollTarget = null;
 let scrollTimer = 0;
@@ -101,13 +105,21 @@ el.signIn.addEventListener("click", async () => {
 });
 el.signOut.addEventListener("click", () => store.signOut());
 
+// Odtwarza animację wejścia (przy otwarciu aplikacji i po zmianie motywu).
+function playIntro() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const root = document.documentElement;
+  root.classList.remove("intro");
+  void root.offsetWidth;              // wymusza ponowne uruchomienie animacji CSS
+  motion.introStart = now();
+  root.style.setProperty("--intro-shift", "0ms");
+  root.classList.add("intro");
+  clearTimeout(introTimer);
+  introTimer = setTimeout(tickIntro, 2700);
+}
+
 function start() {
-  if (!motion.introStart && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    motion.introStart = now();
-    document.documentElement.classList.add("intro");
-    document.documentElement.style.setProperty("--intro-shift", "0ms");
-    setTimeout(tickIntro, 2700);
-  }
+  if (!started) { started = true; playIntro(); }
   stop();
   unsubHabits = store.watchHabits((list) => {
     const ids = new Set(list.map((h) => h.id));
@@ -594,8 +606,15 @@ skinDialog.addEventListener("click", (e) => {
   if (e.target === skinDialog) { skinDialog.close(); return; }
   const card = e.target.closest(".skin-card");
   if (!card) return;
+  const changed = card.dataset.skin !== currentSkin();
   applySkin(card.dataset.skin);
   renderSkins();
+  if (changed) {
+    // zamknij okno i pokaż nowy motyw z jego animacją wejścia (od góry strony)
+    skinDialog.close();
+    window.scrollTo({ top: 0, behavior: "auto" });
+    if (!el.app.hidden) playIntro();
+  }
 });
 if (!SKINS.some((x) => x.id === document.documentElement.dataset.skin)) applySkin(DEFAULT_SKIN);
 
