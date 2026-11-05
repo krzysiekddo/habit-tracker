@@ -853,6 +853,7 @@ function applyDensity(v, save) {
   const root = document.documentElement.style;
   root.setProperty("--d", String(0.65 + v / 100 * 0.7));
   root.setProperty("--df", String(0.88 + v / 100 * 0.24));
+  root.setProperty("--de", String(0.7 + Math.min(v, 50) / 50 * 0.3));   // wydarzenia: dodatkowo do -30% przy zwartym
   densRange.value = String(v);
   densRange.style.setProperty("--fill", `${v}%`);
   densVal.textContent = `${v}%`;

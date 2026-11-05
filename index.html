@@ -34,6 +34,7 @@
       if (dn !== null && !isNaN(+dn)) {
         document.documentElement.style.setProperty("--d", String(0.65 + (+dn) / 100 * 0.7));
         document.documentElement.style.setProperty("--df", String(0.88 + (+dn) / 100 * 0.24));
+        document.documentElement.style.setProperty("--de", String(0.7 + Math.min(+dn, 50) / 50 * 0.3));
       }
       ["marker", "pastel"].forEach(function (k) {
         var h = null;

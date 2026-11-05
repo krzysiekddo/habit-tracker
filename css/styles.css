@@ -1083,3 +1083,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .kpi-val { font-size: calc(30px * var(--df, 1)); }
   .colophon { margin-top: calc(56px * var(--d, 1)); }
 }
+
+/* wydarzenia: przy zwartym układzie mniejsze o dodatkowe ~30% (--de: 0.7 … 1) */
+@media (max-width: 760px) {
+  .index-events .index-row { padding: calc(14px * var(--d, 1) * var(--de, 1)) 0; row-gap: calc(8px * var(--d, 1) * var(--de, 1)); }
+  .index-events .index-name { font-size: calc(20px * var(--df, 1) * var(--de, 1)); }
+  .index-events .index-date { font-size: calc(11px * var(--de, 1)); }
+  .index-events .index-date b { font-size: calc(28px * var(--de, 1)); }
+  .index-events .index-when { font-size: calc(12px * var(--de, 1)); }
+  .index-events .index-row .btn-sm { min-height: calc(38px * var(--de, 1)); padding: 0 calc(12px * var(--de, 1)); font-size: calc(12px * var(--de, 1)); }
+  .index-events .index-head h2 { font-size: calc(32px * var(--df, 1) * var(--de, 1)); }
+}
