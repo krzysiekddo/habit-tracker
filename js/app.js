@@ -4,6 +4,7 @@ import {
   monthGen, monthNom, rangeLabel,
 } from "./dates.js";
 import { t, N, lang, setLang, applyStatic } from "./i18n.js";
+import { SKINS, DEFAULT_SKIN } from "./themes.js";
 
 const useFirebase = Boolean(firebaseConfig.apiKey);
 const store = await import(useFirebase ? "./store-firebase.js" : "./store-local.js");
@@ -464,9 +465,14 @@ document.addEventListener("visibilitychange", () => {
 // ---------- tryb ciemny ----------
 const themeBtn = document.getElementById("theme-toggle");
 const themeMeta = document.querySelector('meta[name="theme-color"]');
+function syncThemeColor() {
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--paper").trim();
+  if (bg) themeMeta?.setAttribute("content", bg);
+}
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  themeMeta?.setAttribute("content", theme === "dark" ? "#000000" : "#ffffff");
+  syncThemeColor();
+  if (document.getElementById("skin-dialog").open) renderSkins();
   themeBtn.setAttribute("aria-label", theme === "dark" ? t("toLight") : t("toDark"));
   themeBtn.setAttribute("aria-pressed", String(theme === "dark"));
 }
@@ -476,6 +482,44 @@ themeBtn.addEventListener("click", () => {
   applyTheme(next);
   try { localStorage.setItem("habits:theme", next); } catch { /* ignoruj */ }
 });
+
+// ---------- motywy ----------
+const skinBtn = document.getElementById("skin-toggle");
+const skinDialog = document.getElementById("skin-dialog");
+const skinList = document.getElementById("skin-list");
+
+function currentSkin() {
+  const s = document.documentElement.dataset.skin;
+  return SKINS.some((x) => x.id === s) ? s : DEFAULT_SKIN;
+}
+function applySkin(id) {
+  document.documentElement.dataset.skin = id;
+  try { localStorage.setItem("habits:skin", id); } catch { /* ignoruj */ }
+  syncThemeColor();
+}
+function renderSkins() {
+  const mode = document.documentElement.dataset.theme || "light";
+  const cur = currentSkin();
+  const L = document.documentElement.lang === "en" ? "en" : "pl";
+  skinList.innerHTML = SKINS.map((s) => `
+    <button type="button" class="skin-card" data-skin="${s.id}" data-theme="${mode}" aria-pressed="${s.id === cur}">
+      <span class="skin-check" aria-hidden="true">✓</span>
+      <span class="skin-sample">Aa</span>
+      <span class="skin-row"><span class="box on" aria-hidden="true"></span>${esc(t("skinSample"))}</span>
+      <span class="skin-name">${esc(s.name[L])}</span>
+      <span class="skin-desc">${esc(s.desc[L])}</span>
+    </button>`).join("");
+}
+skinBtn.addEventListener("click", () => { renderSkins(); skinDialog.showModal(); });
+document.getElementById("skin-close").addEventListener("click", () => skinDialog.close());
+skinDialog.addEventListener("click", (e) => {
+  if (e.target === skinDialog) { skinDialog.close(); return; }
+  const card = e.target.closest(".skin-card");
+  if (!card) return;
+  applySkin(card.dataset.skin);
+  renderSkins();
+});
+if (!SKINS.some((x) => x.id === document.documentElement.dataset.skin)) applySkin(DEFAULT_SKIN);
 
 // ---------- język ----------
 const langBtn = document.getElementById("lang-toggle");
@@ -487,6 +531,7 @@ function refreshLang() {
   if (state.user) el.modeNote.textContent = useFirebase
     ? t("signedIn", { who: state.user.email || state.user.displayName || "—" })
     : t("localMode");
+  if (skinDialog.open) renderSkins();
   if (el.dialog.open) { syncDialogMode(); if (el.del.classList.contains("armed")) el.del.textContent = t("delSure"); else el.del.textContent = t("del"); renderPicker(); }
   render();
 }

@@ -1,0 +1,197 @@
+/* ==========================================================
+   MOTYWY
+   Każdy motyw = blok [data-skin="id"] (jasny) + [data-skin="id"][data-theme="dark"] (ciemny).
+   Jasny blok MUSI definiować wszystkie zmienne z listy poniżej,
+   ciemny nadpisuje zwykle tylko kolory.
+   Nowy motyw: skopiuj blok, zmień wartości i dopisz go w js/themes.js.
+
+   Zmienne:
+     kolory   --paper (tło)  --card (karty, przyciski)  --ink (tekst)  --line (ramki)
+              --accent (wypełnienia: dziś, ptaszki, główne przyciski)  --on-accent  --accent-line
+              --veil (tło pod oknem)
+     czcionki --display (nagłówki)  --display-weight  --display-case  --serif (treść)  --sans (etykiety)
+              --nameplate / --nameplate-m (rozmiar winiety desktop / telefon)
+     kształt  --rule / --rule-heavy (grubość ramek)  --shadow (przesunięcie cienia, px)
+              --radius-xs / -sm / (zwykły) / -lg
+     cienie   --shadow-xs / -sm / -sm-hover / -md / -lg / -none / -fab / -fab-press
+     ruch     --press (wciśnięcie)  --lift (najechanie)
+   ========================================================== */
+
+/* ---------- czcionki (ładują się dopiero, gdy motyw ich używa) ---------- */
+@font-face { font-family: "Ultra"; src: url("../fonts/ultra.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Young Serif"; src: url("../fonts/young-serif.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Jost"; src: url("../fonts/jost.woff") format("woff"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Archivo Black"; src: url("../fonts/archivo-black.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Archivo"; src: url("../fonts/archivo.woff") format("woff"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Fraunces"; src: url("../fonts/fraunces.woff") format("woff"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "Space Mono"; src: url("../fonts/space-mono.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Space Mono"; src: url("../fonts/space-mono-bold.woff") format("woff"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Fredoka"; src: url("../fonts/fredoka.woff") format("woff"); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Nunito"; src: url("../fonts/nunito.woff") format("woff"); font-weight: 200 1000; font-display: swap; }
+
+
+/* ==========================================================
+   1. GAZETA — czarno-biała, grube ramki, twarde cienie (domyślny)
+   ========================================================== */
+:root,
+[data-skin="gazeta"] {
+  --paper: #fff; --card: #fff; --ink: #000; --line: #000;
+  --accent: #000; --on-accent: #fff; --accent-line: #000;
+  --veil: rgba(255, 255, 255, .82);
+  --display: "Ultra", "Rockwell Extra Bold", Georgia, serif;
+  --display-weight: 400; --display-case: none;
+  --serif: "Young Serif", Georgia, serif;
+  --sans: "Jost", "Futura", system-ui, sans-serif;
+  --nameplate: clamp(64px, 15vw, 200px); --nameplate-m: 64px;
+  --rule: 3px; --rule-heavy: 5px; --shadow: 6px;
+  --radius-xs: 0; --radius-sm: 0; --radius: 0; --radius-lg: 0;
+  --shadow-xs: 3px 3px 0 var(--line);
+  --shadow-sm: 4px 4px 0 var(--line);
+  --shadow-sm-hover: 5px 5px 0 var(--line);
+  --shadow-md: 6px 6px 0 var(--line);
+  --shadow-lg: 10px 10px 0 var(--line);
+  --shadow-none: 0 0 0 transparent;
+  --shadow-fab: 0 0 0 3px var(--paper), 7px 7px 0 3px var(--line);
+  --shadow-fab-press: 0 0 0 3px var(--paper), 2px 2px 0 3px var(--line);
+  --press: translate(4px, 4px); --lift: translate(-1px, -1px);
+  color-scheme: light;
+}
+[data-skin="gazeta"][data-theme="dark"] {
+  --paper: #000; --card: #000; --ink: #fff; --line: #fff;
+  --accent: #fff; --on-accent: #000; --accent-line: #fff;
+  --veil: rgba(0, 0, 0, .82);
+  color-scheme: dark;
+}
+
+
+/* ==========================================================
+   2. MARKER — biel, czerń i żółty zakreślacz, wersaliki
+   ========================================================== */
+[data-skin="marker"] {
+  --paper: #fff; --card: #fff; --ink: #111; --line: #111;
+  --accent: #ffe14d; --on-accent: #111; --accent-line: #111;
+  --veil: rgba(255, 255, 255, .85);
+  --display: "Archivo Black", "Arial Black", sans-serif;
+  --display-weight: 400; --display-case: uppercase;
+  --serif: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --nameplate: clamp(56px, 13vw, 180px); --nameplate-m: 54px;
+  --rule: 3px; --rule-heavy: 4px; --shadow: 6px;
+  --radius-xs: 0; --radius-sm: 0; --radius: 0; --radius-lg: 0;
+  --shadow-xs: 3px 3px 0 var(--line);
+  --shadow-sm: 4px 4px 0 var(--line);
+  --shadow-sm-hover: 6px 6px 0 var(--line);
+  --shadow-md: 6px 6px 0 var(--line);
+  --shadow-lg: 10px 10px 0 var(--line);
+  --shadow-none: 0 0 0 transparent;
+  --shadow-fab: 6px 6px 0 var(--line);
+  --shadow-fab-press: 1px 1px 0 var(--line);
+  --press: translate(4px, 4px); --lift: translate(-2px, -2px);
+  color-scheme: light;
+}
+[data-skin="marker"][data-theme="dark"] {
+  --paper: #111; --card: #1b1b1b; --ink: #f5f5f5; --line: #f5f5f5;
+  --accent: #ffe14d; --on-accent: #111; --accent-line: #ffe14d;
+  --veil: rgba(17, 17, 17, .85);
+  color-scheme: dark;
+}
+
+
+/* ==========================================================
+   3. PAPIER — kremowy papier, brąz i rdzawa czerwień, miękki szeryf
+   ========================================================== */
+[data-skin="papier"] {
+  --paper: #f2eadf; --card: #fbf6ee; --ink: #2b1d14; --line: #2b1d14;
+  --accent: #b4441e; --on-accent: #fbf6ee; --accent-line: #2b1d14;
+  --veil: rgba(242, 234, 223, .85);
+  --display: "Fraunces", Georgia, serif;
+  --display-weight: 800; --display-case: none;
+  --serif: "Fraunces", Georgia, serif;
+  --sans: "Jost", "Futura", system-ui, sans-serif;
+  --nameplate: clamp(68px, 16vw, 210px); --nameplate-m: 68px;
+  --rule: 2px; --rule-heavy: 3px; --shadow: 4px;
+  --radius-xs: 3px; --radius-sm: 4px; --radius: 6px; --radius-lg: 10px;
+  --shadow-xs: 2px 2px 0 var(--line);
+  --shadow-sm: 3px 3px 0 var(--line);
+  --shadow-sm-hover: 4px 4px 0 var(--line);
+  --shadow-md: 4px 4px 0 var(--line);
+  --shadow-lg: 8px 8px 0 var(--line);
+  --shadow-none: 0 0 0 transparent;
+  --shadow-fab: 4px 4px 0 var(--line);
+  --shadow-fab-press: 1px 1px 0 var(--line);
+  --press: translate(3px, 3px); --lift: translate(-1px, -1px);
+  color-scheme: light;
+}
+[data-skin="papier"][data-theme="dark"] {
+  --paper: #1e1712; --card: #2a211a; --ink: #f2e6d6; --line: #f2e6d6;
+  --accent: #e07a4f; --on-accent: #1e1712; --accent-line: #f2e6d6;
+  --veil: rgba(30, 23, 18, .85);
+  color-scheme: dark;
+}
+
+
+/* ==========================================================
+   4. TERMINAL — maszynowa czcionka, bez cieni; po ciemku zielony fosfor
+   ========================================================== */
+[data-skin="terminal"] {
+  --paper: #f4f7f2; --card: #f4f7f2; --ink: #0f3d1e; --line: #0f3d1e;
+  --accent: #0f3d1e; --on-accent: #f4f7f2; --accent-line: #0f3d1e;
+  --veil: rgba(244, 247, 242, .88);
+  --display: "Space Mono", ui-monospace, Menlo, monospace;
+  --display-weight: 700; --display-case: uppercase;
+  --serif: "Space Mono", ui-monospace, Menlo, monospace;
+  --sans: "Space Mono", ui-monospace, Menlo, monospace;
+  --nameplate: clamp(48px, 11vw, 150px); --nameplate-m: 46px;
+  --rule: 2px; --rule-heavy: 2px; --shadow: 0px;
+  --radius-xs: 0; --radius-sm: 0; --radius: 0; --radius-lg: 0;
+  --shadow-xs: none; --shadow-sm: none; --shadow-sm-hover: none;
+  --shadow-md: none; --shadow-lg: none; --shadow-none: none;
+  --shadow-fab: none; --shadow-fab-press: none;
+  --press: translate(0, 1px); --lift: none;
+  color-scheme: light;
+}
+[data-skin="terminal"][data-theme="dark"] {
+  --paper: #050a06; --card: #050a06; --ink: #39ff6a; --line: #39ff6a;
+  --accent: #39ff6a; --on-accent: #050a06; --accent-line: #39ff6a;
+  --veil: rgba(5, 10, 6, .9);
+  color-scheme: dark;
+}
+
+
+/* ==========================================================
+   5. PASTEL — zaokrąglony, miękkie cienie, lawenda
+   ========================================================== */
+[data-skin="pastel"] {
+  --paper: #fff6ef; --card: #ffffff; --ink: #2d2340; --line: #2d2340;
+  --accent: #b9a2ff; --on-accent: #2d2340; --accent-line: #2d2340;
+  --veil: rgba(255, 246, 239, .8);
+  --display: "Fredoka", "Nunito", system-ui, sans-serif;
+  --display-weight: 600; --display-case: none;
+  --serif: "Nunito", system-ui, sans-serif;
+  --sans: "Nunito", system-ui, sans-serif;
+  --nameplate: clamp(68px, 16vw, 210px); --nameplate-m: 68px;
+  --rule: 2px; --rule-heavy: 2px; --shadow: 6px;
+  --radius-xs: 7px; --radius-sm: 12px; --radius: 18px; --radius-lg: 26px;
+  --shadow-xs: 0 3px 8px rgba(45, 35, 64, .14);
+  --shadow-sm: 0 4px 12px rgba(45, 35, 64, .16);
+  --shadow-sm-hover: 0 8px 18px rgba(45, 35, 64, .2);
+  --shadow-md: 0 8px 24px rgba(45, 35, 64, .14);
+  --shadow-lg: 0 18px 50px rgba(45, 35, 64, .25);
+  --shadow-none: 0 1px 3px rgba(45, 35, 64, .12);
+  --shadow-fab: 0 10px 24px rgba(45, 35, 64, .3);
+  --shadow-fab-press: 0 3px 8px rgba(45, 35, 64, .3);
+  --press: translateY(2px); --lift: translateY(-2px);
+  color-scheme: light;
+}
+[data-skin="pastel"][data-theme="dark"] {
+  --paper: #1c1726; --card: #261f33; --ink: #f1eafe; --line: #5b4e78;
+  --accent: #b9a2ff; --on-accent: #1c1726; --accent-line: #b9a2ff;
+  --veil: rgba(28, 23, 38, .8);
+  --shadow-xs: 0 3px 8px rgba(0, 0, 0, .35);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, .4);
+  --shadow-sm-hover: 0 8px 18px rgba(0, 0, 0, .45);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, .4);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, .55);
+  --shadow-fab: 0 10px 24px rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}

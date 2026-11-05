@@ -50,6 +50,7 @@ const STR = {
     del: "Usuń", delSure: "Na pewno?", cancel: "Anuluj", save: "Zapisz",
     toLight: "Włącz tryb jasny", toDark: "Włącz tryb ciemny",
     langBtn: "EN", langAria: "Switch to English",
+    skinAria: "Wybierz motyw", skinKicker: "Wygląd", skinTitle: "Motyw", skinSample: "Spacer",
   },
   en: {
     issueKind: "Weekly edition",
@@ -79,6 +80,7 @@ const STR = {
     del: "Delete", delSure: "Sure?", cancel: "Cancel", save: "Save",
     toLight: "Switch to light mode", toDark: "Switch to dark mode",
     langBtn: "PL", langAria: "Przełącz na polski",
+    skinAria: "Choose theme", skinKicker: "Appearance", skinTitle: "Theme", skinSample: "Walk",
   },
 };
 

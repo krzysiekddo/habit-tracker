@@ -70,3 +70,15 @@ Otwórz adres strony → zaloguj się Google →
 
 Service worker zawsze najpierw pobiera świeżą wersję z sieci, więc zmiany widać
 po odświeżeniu. Przy większych zmianach podbij `CACHE = "habits-v2"` w `sw.js`.
+
+## Motywy
+
+Wybór motywu: ikona palety w prawym górnym rogu. Każdy motyw ma wersję jasną i ciemną
+(przełącznik księżyc/słońce).
+
+Dodanie nowego motywu:
+1. W `css/themes.css` skopiuj blok istniejącego motywu (`[data-skin="..."]` + wersja `[data-theme="dark"]`),
+   zmień id i wartości zmiennych (kolory, czcionki, ramki, zaokrąglenia, cienie).
+2. Dopisz motyw do listy w `js/themes.js` (id, nazwa PL/EN, krótki opis).
+3. Jeśli używa nowej czcionki — dodaj plik do `fonts/` i `@font-face` na górze `css/themes.css`
+   (oraz do listy plików w `sw.js`, żeby działał offline).
