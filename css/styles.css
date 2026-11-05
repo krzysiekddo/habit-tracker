@@ -1043,3 +1043,43 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .hbar { grid-template-columns: minmax(0, 1fr) 1.2fr 40px; gap: 8px; }
   .collapse-count { font-size: 11px; }
 }
+
+/* ---------- gęstość układu (tylko telefon) ----------
+   --d  mnoży odstępy i wysokości (0.65 zwarty … 1.35 luźny)
+   --df mnoży rozmiar czcionek (0.88 … 1.12) */
+.dens-ctl { display: none !important; }
+@media (max-width: 760px) {
+  .dens-ctl:not([hidden]) { display: grid !important; }
+  .dens-ctl + .glass-ctl { margin-top: 10px; border-top: 0; padding-top: 0; }
+
+  .masthead { padding-top: max(calc(18px * var(--d, 1)), env(safe-area-inset-top)); }
+  .nameplate { font-size: calc(var(--nameplate-m) * var(--df, 1)); padding-top: calc(8px * var(--d, 1)); }
+  .deck { padding: calc(5px * var(--d, 1)) 0 calc(6px * var(--d, 1)); font-size: calc(13px * var(--df, 1)); }
+  .weekbar { margin: calc(14px * var(--d, 1)) 0 calc(12px * var(--d, 1)); }
+  .weekbar h2 { font-size: calc(19px * var(--df, 1)); }
+  .strip { margin-bottom: calc(14px * var(--d, 1)); gap: calc(5px * var(--d, 1)); }
+  .strip-day { padding: calc(6px * var(--d, 1)) 0 calc(7px * var(--d, 1)); }
+  .strip-num { font-size: calc(22px * var(--df, 1)); }
+
+  .day { min-height: calc(50vh * var(--d, 1)); }
+  .day-head { padding: calc(14px * var(--d, 1)) 16px calc(12px * var(--d, 1)); }
+  .day-num { font-size: calc(72px * var(--d, 1)); }
+  .day-month { font-size: calc(20px * var(--df, 1)); }
+  .day-count { font-size: calc(26px * var(--df, 1)); bottom: calc(16px * var(--d, 1)); }
+  .habits { padding: calc(6px * var(--d, 1)) 0; }
+  .habit { padding: calc(10px * var(--d, 1)) 14px; min-height: calc(44px * var(--d, 1)); gap: calc(12px * var(--d, 1)); }
+  .habit-name { font-size: calc(16px * var(--df, 1)); }
+
+  .index { margin-top: calc(44px * var(--d, 1)); }
+  .index-events { margin-top: calc(44px * var(--d, 1)); }
+  .collapsible + .collapsible { margin-top: calc(28px * var(--d, 1)); }
+  .index-head { padding: calc(14px * var(--d, 1)) 0 calc(12px * var(--d, 1)); }
+  .index-head h2 { font-size: calc(32px * var(--df, 1)); }
+  .index-row { padding: calc(14px * var(--d, 1)) 0; row-gap: calc(8px * var(--d, 1)); }
+  .index-name { font-size: calc(20px * var(--df, 1)); }
+
+  .stats-kpis { gap: calc(12px * var(--d, 1)); margin: calc(18px * var(--d, 1)) 0; }
+  .kpi, .chart { padding: calc(14px * var(--d, 1)) 16px calc(12px * var(--d, 1)); }
+  .kpi-val { font-size: calc(30px * var(--df, 1)); }
+  .colophon { margin-top: calc(56px * var(--d, 1)); }
+}

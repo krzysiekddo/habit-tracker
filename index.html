@@ -29,6 +29,12 @@
       var g = null;
       try { g = localStorage.getItem("habits:glass"); } catch (e) {}
       if (g !== null && !isNaN(+g)) document.documentElement.style.setProperty("--glass-t", String(1 - (+g) / 100));
+      var dn = null;
+      try { dn = localStorage.getItem("habits:density"); } catch (e) {}
+      if (dn !== null && !isNaN(+dn)) {
+        document.documentElement.style.setProperty("--d", String(0.65 + (+dn) / 100 * 0.7));
+        document.documentElement.style.setProperty("--df", String(0.88 + (+dn) / 100 * 0.24));
+      }
       ["marker", "pastel"].forEach(function (k) {
         var h = null;
         try { h = localStorage.getItem("habits:hue:" + k); } catch (e) {}
@@ -123,6 +129,14 @@
         <button class="btn btn-icon sheet-close" type="button" id="skin-close" aria-label="Zamknij" data-i18n-aria="close">✕</button>
       </header>
       <div class="skin-list" id="skin-list"></div>
+      <label class="glass-ctl dens-ctl" id="dens-ctl">
+        <span class="glass-ctl-head">
+          <span class="field-label" data-i18n="densLabel">Układ</span>
+          <span class="glass-ctl-val" id="dens-val"></span>
+        </span>
+        <input type="range" id="dens-range" min="0" max="100" step="1" value="50">
+        <span class="glass-ctl-ends"><span data-i18n="densCompact">Zwarty</span><span data-i18n="densLoose">Luźny</span></span>
+      </label>
       <label class="glass-ctl hue-ctl" id="hue-ctl" hidden>
         <span class="glass-ctl-head">
           <span class="field-label" data-i18n="hueLabel">Kolor</span>

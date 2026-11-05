@@ -846,6 +846,21 @@ function applyGlass(v, save) {
 applyGlass(readGlass(), false);
 glassRange.addEventListener("input", () => applyGlass(Number(glassRange.value), true));
 
+// gęstość układu (tylko telefon): 0 = zwarty, 100 = luźny
+const densRange = document.getElementById("dens-range");
+const densVal = document.getElementById("dens-val");
+function applyDensity(v, save) {
+  const root = document.documentElement.style;
+  root.setProperty("--d", String(0.65 + v / 100 * 0.7));
+  root.setProperty("--df", String(0.88 + v / 100 * 0.24));
+  densRange.value = String(v);
+  densRange.style.setProperty("--fill", `${v}%`);
+  densVal.textContent = `${v}%`;
+  if (save) { try { localStorage.setItem("habits:density", String(v)); } catch { /* ignoruj */ } }
+}
+(() => { let v = 50; try { const s = localStorage.getItem("habits:density"); if (s !== null && !isNaN(+s)) v = +s; } catch { /* ignoruj */ } applyDensity(v, false); })();
+densRange.addEventListener("input", () => { applyDensity(Number(densRange.value), true); scrollToActive(false); });
+
 const HUE_DEFAULT = { marker: 50, pastel: 255 };
 const hueCtl = document.getElementById("hue-ctl");
 const hueRange = document.getElementById("hue-range");
