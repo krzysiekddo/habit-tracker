@@ -22,6 +22,16 @@ body {
 
 [hidden] { display: none !important; }
 
+/* obraz w tle (tylko motywy, które go ustawiają) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--backdrop, none) center 75% / cover no-repeat;
+  pointer-events: none;
+}
+
 button { font: inherit; color: inherit; cursor: pointer; }
 
 :focus-visible {
