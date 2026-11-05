@@ -556,7 +556,7 @@ function openDialog(habit = null) {
   state.editingId = habit?.id ?? null;
   el.name.value = habit?.name ?? "";
   const ev = habit ? isEvent(habit) : false;
-  pickedDays = new Set(habit && !ev ? habit.days : [1, 2, 3, 4, 5, 6, 7]);
+  pickedDays = new Set(habit && !ev ? habit.days : []);
   el.oneoff.checked = ev;
   el.date.value = ev ? habit.date : defaultEventDate();
   syncDialogMode();
