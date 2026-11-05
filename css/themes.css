@@ -25,6 +25,8 @@
 @font-face { font-family: "Archivo Black"; src: url("../fonts/archivo-black.woff") format("woff"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Archivo"; src: url("../fonts/archivo.woff") format("woff"); font-weight: 100 900; font-display: swap; }
 @font-face { font-family: "Fredoka"; src: url("../fonts/fredoka.woff") format("woff"); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "IM Fell English"; src: url("../fonts/im-fell-regular.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "IM Fell English"; src: url("../fonts/im-fell-italic.woff") format("woff"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "Nunito"; src: url("../fonts/nunito.woff") format("woff"); font-weight: 200 1000; font-display: swap; }
 
 
@@ -265,3 +267,129 @@
 /* Szkło: karty dnia z lekkim cieniem (duży cień był ucinany przez przewijany pas kart i tworzył ciemny pas) */
 [data-skin="szklo"] .day { box-shadow: var(--glass-edge), 0 4px 14px var(--panel-shadow); }
 @media (max-width: 760px) { [data-skin="szklo"] { --wpb: 14px; } [data-skin="szklo"] .week { padding-bottom: 14px; margin-bottom: max(0px, calc(var(--sg) - 14px)); } }
+
+
+/* ==========================================================
+   5. EXCEL — arkusz kalkulacyjny: siatka komórek, zieleń Excela, Calibri
+   ========================================================== */
+[data-skin="excel"] {
+  --paper: #f3f3f3; --card: #ffffff; --ink: #1f1f1f; --line: #c8c8c8;
+  --accent: #217346; --on-accent: #ffffff; --accent-line: #185c37;
+  --veil: rgba(243, 243, 243, .7);
+  --grid-line: #dadada; --hdr: #e6e6e6;
+  --display: Calibri, Carlito, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --display-weight: 700; --display-case: none;
+  --serif: Calibri, Carlito, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --sans: "Segoe UI", Calibri, Carlito, "Helvetica Neue", Arial, sans-serif;
+  --nameplate: clamp(56px, 12vw, 150px); --nameplate-m: 54px;
+  --rule: 1px; --rule-heavy: 2px; --shadow: 0px;
+  --radius-xs: 0; --radius-sm: 2px; --radius: 2px; --radius-lg: 4px;
+  --shadow-xs: none; --shadow-sm: 0 1px 2px rgba(0, 0, 0, .12);
+  --shadow-sm-hover: 0 2px 6px rgba(0, 0, 0, .16);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, .1); --shadow-lg: 0 10px 30px rgba(0, 0, 0, .22);
+  --shadow-none: none;
+  --shadow-fab: 0 4px 12px rgba(0, 0, 0, .25); --shadow-fab-press: 0 1px 4px rgba(0, 0, 0, .25);
+  --press: translateY(1px); --lift: none;
+  --backdrop:
+    repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 22px);
+  color-scheme: light;
+}
+[data-skin="excel"][data-theme="dark"] {
+  --paper: #1f1f1f; --card: #292929; --ink: #e8e8e8; --line: #444;
+  --accent: #3fa66a; --on-accent: #0f1f15; --accent-line: #3fa66a;
+  --veil: rgba(20, 20, 20, .7);
+  --grid-line: #2f2f2f; --hdr: #333;
+  color-scheme: dark;
+}
+[data-skin="excel"] body::before { background-size: auto; background-position: 0 0; background-repeat: repeat; bottom: 0; transform: none; }
+[data-skin="excel"] .masthead { text-align: left; }
+[data-skin="excel"] .nameplate { letter-spacing: -.02em; padding-left: 4px; }
+/* pasek formuły */
+[data-skin="excel"] .deck {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 6px; padding: 6px 10px;
+  background: var(--card); border: 1px solid var(--line); border-bottom-width: 1px;
+  font-family: var(--sans); text-align: left;
+}
+[data-skin="excel"] .deck::before {
+  content: "fx"; font-style: italic; font-weight: 600; opacity: .6;
+  padding-right: 10px; border-right: 1px solid var(--line);
+}
+[data-skin="excel"] .issue-line { border-bottom: 1px solid var(--line); }
+/* karty dnia jak arkusz: nagłówek kolumny i komórki */
+[data-skin="excel"] .day-head { background: var(--hdr); border-bottom: 1px solid var(--line); }
+[data-skin="excel"] .day.is-today .day-head { background: var(--accent); color: var(--on-accent); }
+[data-skin="excel"] .habits { padding: 0; }
+[data-skin="excel"] .habits li + li .habit { border-top: 1px solid var(--grid-line); }
+[data-skin="excel"] .habit:hover,
+[data-skin="excel"] .habit:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+[data-skin="excel"] .box { border-width: 1.5px; border-radius: 2px; }
+[data-skin="excel"] .strip-day { border-width: 1px; }
+[data-skin="excel"] .strip-day[aria-selected="true"] { background: var(--card); color: var(--accent); border-color: var(--line); box-shadow: inset 0 -3px 0 var(--accent); }
+[data-skin="excel"] .index-head { border-bottom: 1px solid var(--line); }
+[data-skin="excel"] .index { border-top-width: 2px; }
+[data-skin="excel"] .index-row { border-bottom-color: var(--grid-line); }
+[data-skin="excel"] .collapse-count { border-width: 1px; }
+[data-skin="excel"] .skin-card[data-skin="excel"],
+.skin-card[data-skin="excel"] { background-image: var(--backdrop); }
+
+
+/* ==========================================================
+   6. ANATOMIA — dawna rycina anatomiczna: pergamin, sepia, czerwień krwi
+   ========================================================== */
+[data-skin="anatomia"] {
+  --paper: #efe6d2; --card: #f7f1e3; --ink: #3b2a1e; --line: #5a4330;
+  --accent: #8e1b1b; --on-accent: #f7f1e3; --accent-line: #5a1010;
+  --veil: rgba(239, 230, 210, .82);
+  --display: "IM Fell English", "Iowan Old Style", Georgia, serif;
+  --display-weight: 400; --display-case: none;
+  --serif: "IM Fell English", "Iowan Old Style", Georgia, serif;
+  --sans: "Jost", "Futura", system-ui, sans-serif;
+  --nameplate: clamp(64px, 15vw, 200px); --nameplate-m: 62px;
+  --rule: 1.5px; --rule-heavy: 3px; --shadow: 0px;
+  --radius-xs: 0; --radius-sm: 0; --radius: 0; --radius-lg: 0;
+  --shadow-xs: 0 0 0 transparent; --shadow-sm: 0 0 0 transparent; --shadow-sm-hover: 0 1px 0 var(--line);
+  --shadow-md: 0 0 0 transparent; --shadow-lg: 0 18px 50px rgba(59, 42, 30, .3);
+  --shadow-none: 0 0 0 transparent;
+  --shadow-fab: 0 6px 16px rgba(59, 42, 30, .35); --shadow-fab-press: 0 2px 6px rgba(59, 42, 30, .35);
+  --press: translateY(1px); --lift: none;
+  --backdrop: url("../images/anatomia-light.svg");
+  color-scheme: light;
+}
+[data-skin="anatomia"][data-theme="dark"] {
+  --paper: #15110d; --card: #1d1813; --ink: #e9dcc3; --line: #a8957a;
+  --accent: #c0392b; --on-accent: #f7f1e3; --accent-line: #e9dcc3;
+  --veil: rgba(21, 17, 13, .85);
+  --backdrop: url("../images/anatomia-dark.svg");
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, .5);
+  --shadow-fab: 0 6px 16px rgba(0, 0, 0, .5); --shadow-fab-press: 0 2px 6px rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+[data-skin="anatomia"] body::before {
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgba(90, 60, 30, .14) 100%),
+    var(--backdrop) center 38% / min(1100px, 125vw) auto no-repeat;
+  bottom: 0; transform: none;
+}
+[data-skin="anatomia"][data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, .45) 100%),
+    var(--backdrop) center 38% / min(1100px, 125vw) auto no-repeat;
+}
+/* ramki ryciny: podwójna cienka linia */
+[data-skin="anatomia"] .day,
+[data-skin="anatomia"] .chart,
+[data-skin="anatomia"] .kpi { outline: 1px solid var(--line); outline-offset: 3px; }
+[data-skin="anatomia"] .nameplate { font-style: italic; letter-spacing: 0; }
+[data-skin="anatomia"] .deck { font-style: italic; }
+[data-skin="anatomia"] .day-head { border-bottom-style: double; border-bottom-width: 4px; }
+[data-skin="anatomia"] .day-num::before { content: "Tab. "; font-size: .32em; font-style: italic; vertical-align: .9em; }
+[data-skin="anatomia"] .index-head h2 { font-style: italic; }
+[data-skin="anatomia"] .habit-name { font-size: 1.08em; }
+[data-skin="anatomia"] .box { border-width: 1.5px; border-radius: 50%; }
+[data-skin="anatomia"] .habit[aria-pressed="true"] .box::after { left: 6px; top: 2px; }
+.skin-card[data-skin="anatomia"] {
+  background-image: var(--backdrop);
+  background-size: 180% auto; background-position: center 35%; background-repeat: no-repeat;
+}

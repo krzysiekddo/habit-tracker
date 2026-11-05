@@ -1119,3 +1119,18 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .index, .index-events, .collapsible + .collapsible { margin-top: 0; margin-bottom: var(--sg); }
   .colophon { margin-top: 0; }
 }
+
+/* mniejsze podglądy motywów */
+.skin-list { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.skin-card { padding: 10px 10px 9px; gap: 4px; }
+.skin-sample { font-size: 28px; }
+.skin-row { font-size: 12px; gap: 6px; }
+.skin-row .box { width: 14px; height: 14px; }
+.skin-name { margin-top: 2px; font-size: 11px; letter-spacing: .1em; }
+.skin-desc { font-size: 11px; line-height: 1.25; }
+.skin-check { top: 7px; right: 7px; width: 20px; height: 20px; font-size: 12px; }
+@media (max-width: 760px) {
+  .skin-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .skin-sample { font-size: 24px; }
+  .skin-desc { display: none; }
+}
