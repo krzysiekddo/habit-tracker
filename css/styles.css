@@ -908,7 +908,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* sekcja wydarzeń pod spisem nawyków */
 .index-events { margin-top: 44px; }
-.index-events .index-head h2 { font-size: clamp(28px, 3.6vw, 44px); }
+.index .index-head h2 { font-size: clamp(28px, 3.6vw, 44px); }
 @media (max-width: 760px) { .index-events .index-head .btn { display: inline-flex; } }
 
 /* ---------- zmiana kolejności nawyków ---------- */
@@ -1092,5 +1092,5 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .index-events .index-date b { font-size: calc(28px * var(--de, 1)); }
   .index-events .index-when { font-size: calc(12px * var(--de, 1)); }
   .index-events .index-row .btn-sm { min-height: calc(38px * var(--de, 1)); padding: 0 calc(12px * var(--de, 1)); font-size: calc(12px * var(--de, 1)); }
-  .index-events .index-head h2 { font-size: calc(32px * var(--df, 1) * var(--de, 1)); }
+  .index .index-head h2 { font-size: calc(32px * var(--df, 1) * var(--de, 1)); }
 }
