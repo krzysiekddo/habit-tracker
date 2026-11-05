@@ -29,7 +29,7 @@
       var g = null;
       try { g = localStorage.getItem("habits:glass"); } catch (e) {}
       if (g !== null && !isNaN(+g)) document.documentElement.style.setProperty("--glass-t", String(1 - (+g) / 100));
-      ["szklo", "pastel"].forEach(function (k) {
+      ["marker", "pastel"].forEach(function (k) {
         var h = null;
         try { h = localStorage.getItem("habits:hue:" + k); } catch (e) {}
         if (h !== null && !isNaN(+h)) document.documentElement.style.setProperty("--hue-" + k, h);

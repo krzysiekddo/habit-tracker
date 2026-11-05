@@ -709,7 +709,7 @@ function applyGlass(v, save) {
 applyGlass(readGlass(), false);
 glassRange.addEventListener("input", () => applyGlass(Number(glassRange.value), true));
 
-const HUE_DEFAULT = { szklo: 220, pastel: 255 };
+const HUE_DEFAULT = { marker: 50, pastel: 255 };
 const hueCtl = document.getElementById("hue-ctl");
 const hueRange = document.getElementById("hue-range");
 function readHue(skin) {
