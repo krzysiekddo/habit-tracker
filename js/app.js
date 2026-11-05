@@ -380,6 +380,11 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
+// ---------- blokada zoomu (iOS ignoruje user-scalable=no w Safari) ----------
+["gesturestart", "gesturechange", "gestureend"].forEach((t) =>
+  document.addEventListener(t, (e) => e.preventDefault(), { passive: false })
+);
+
 // ---------- PWA ----------
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});
