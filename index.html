@@ -82,7 +82,18 @@
         <input id="habit-name" name="name" type="text" maxlength="60" autocomplete="off" placeholder="np. Poranny spacer" required>
       </label>
 
-      <fieldset class="field">
+      <label class="oneoff">
+        <input type="checkbox" id="oneoff-input">
+        <span class="oneoff-box" aria-hidden="true"></span>
+        <span class="oneoff-text">Wydarzenie jednorazowe</span>
+      </label>
+
+      <label class="field" id="date-field" hidden>
+        <span class="field-label">Data</span>
+        <input id="event-date" name="date" type="date" required>
+      </label>
+
+      <fieldset class="field" id="days-field">
         <legend class="field-label">Dni</legend>
         <div class="days-picker" id="days-picker"></div>
         <div class="presets">

@@ -1,6 +1,7 @@
 // Magazyn w chmurze: Firebase Auth (Google) + Firestore z pamięcią offline.
 // Struktura danych:
 //   users/{uid}/habits/{habitId}          { name, days:[1..7], start:"RRRR-MM-DD", order }
+//                                         wydarzenie jednorazowe: { name, date:"RRRR-MM-DD", days:[], order }
 //   users/{uid}/done/{habitId}_{date}     { habitId, date:"RRRR-MM-DD" }
 
 import { firebaseConfig } from "./firebase-config.js";
@@ -77,10 +78,10 @@ export function watchDone(from, to, cb) {
 // Zapisów nie „czekamy” w UI — Firestore pokazuje zmianę od razu i dosyła ją,
 // gdy jest internet. Dlatego funkcje zwracają obietnicę, ale app jej nie blokuje.
 
-export function addHabit({ name, days, start }) {
+export function addHabit(fields) {
   const ref = doc(habitsCol());
   cachedOrder += 1;
-  return setDoc(ref, { name, days, start, order: cachedOrder });
+  return setDoc(ref, { ...fields, order: cachedOrder });
 }
 
 export function updateHabit(id, patch) {

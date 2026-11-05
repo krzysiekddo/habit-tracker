@@ -1,10 +1,11 @@
 import { firebaseConfig } from "./firebase-config.js";
 import {
-  toKey, today, addDays, startOfWeek, isoWeek, isoDow,
+  toKey, fromKey, today, addDays, startOfWeek, isoWeek, isoDow,
   DOW_LONG, DOW_SHORT, DOW_LETTER, monthGen, monthNom, rangeLabel,
 } from "./dates.js";
 
 const useFirebase = Boolean(firebaseConfig.apiKey);
+const MONTH_SHORT = ["sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "paź", "lis", "gru"];
 const store = await import(useFirebase ? "./store-firebase.js" : "./store-local.js");
 
 // ---------- stan ----------
@@ -30,6 +31,7 @@ const el = {
   dialog: $("habit-dialog"), form: $("habit-form"), name: $("habit-name"),
   picker: $("days-picker"), kicker: $("dialog-kicker"), title: $("dialog-title"),
   close: $("dialog-close"), cancel: $("cancel-btn"), del: $("delete-btn"), formError: $("form-error"),
+  oneoff: $("oneoff-input"), dateField: $("date-field"), date: $("event-date"), daysField: $("days-field"),
 };
 
 const mobileMq = window.matchMedia("(max-width: 760px)");
@@ -39,10 +41,14 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 
 const weekDates = () => Array.from({ length: 7 }, (_, i) => addDays(state.weekStart, i));
 
+const isEvent = (h) => Boolean(h.date);
+
 const habitsFor = (date) => {
   const key = toKey(date);
   const dow = isoDow(date);
-  return state.habits.filter((h) => h.days.includes(dow) && (!h.start || key >= h.start));
+  const habits = state.habits.filter((h) => !isEvent(h) && (h.days || []).includes(dow) && (!h.start || key >= h.start));
+  const events = state.habits.filter((h) => isEvent(h) && h.date === key);
+  return [...habits, ...events];
 };
 
 // ---------- autoryzacja ----------
@@ -145,7 +151,7 @@ function renderWeek() {
       const k = `${h.id}|${key}`;
       const on = state.done.has(k);
       return `<li><button class="habit" type="button" aria-pressed="${on}" data-k="${esc(k)}">
-        <span class="box" aria-hidden="true"></span><span class="habit-name">${esc(h.name)}</span></button></li>`;
+        <span class="box" aria-hidden="true"></span><span class="habit-name">${esc(h.name)}${isEvent(h) ? `<span class="habit-tag">Wydarzenie</span>` : ""}</span></button></li>`;
     }).join("");
 
     return `<section class="${cls.join(" ")}" data-idx="${i}" aria-label="${DOW_LONG[i]} ${d.getDate()} ${monthGen(d)}">
@@ -181,7 +187,14 @@ function renderIndex() {
     el.index.innerHTML = `<li class="index-empty">Spis jest pusty. Dodaj pierwszy nawyk — wystarczy nazwa i dni.</li>`;
     return;
   }
-  el.index.innerHTML = state.habits.map((h, i) => `
+  const habits = state.habits.filter((h) => !isEvent(h));
+  const tKey = toKey(today());
+  const events = state.habits.filter(isEvent).sort((x, y) => x.date.localeCompare(y.date));
+  // nadchodzące najpierw, minione na końcu
+  const upcoming = events.filter((h) => h.date >= tKey);
+  const past = events.filter((h) => h.date < tKey).reverse();
+
+  const habitRow = (h, i) => `
     <li class="index-row">
       <span class="index-no">${String(i + 1).padStart(2, "0")}</span>
       <span class="index-name">${esc(h.name)}</span>
@@ -189,7 +202,26 @@ function renderIndex() {
         ${DOW_LETTER.map((l, j) => `<span class="${h.days.includes(j + 1) ? "on" : "off"}" aria-hidden="true">${l}</span>`).join("")}
       </span>
       <button class="btn btn-sm" type="button" data-edit="${esc(h.id)}">Edytuj</button>
-    </li>`).join("");
+    </li>`;
+
+  const eventRow = (h) => {
+    const d = fromKey(h.date);
+    return `
+    <li class="index-row ${h.date < tKey ? "is-past" : ""}">
+      <span class="index-no index-date"><b>${d.getDate()}</b>${MONTH_SHORT[d.getMonth()]}</span>
+      <span class="index-name">${esc(h.name)}</span>
+      <span class="index-when">${DOW_LONG[isoDow(d) - 1]}${d.getFullYear() !== today().getFullYear() ? " " + d.getFullYear() : ""}</span>
+      <button class="btn btn-sm" type="button" data-edit="${esc(h.id)}">Edytuj</button>
+    </li>`;
+  };
+
+  let html = habits.map(habitRow).join("");
+  if (!habits.length) html += `<li class="index-empty">Brak stałych nawyków.</li>`;
+  if (events.length) {
+    html += `<li class="index-sub">Wydarzenia</li>`;
+    html += [...upcoming, ...past].map(eventRow).join("");
+  }
+  el.index.innerHTML = html;
 }
 
 // ---------- odhaczanie ----------
@@ -303,12 +335,36 @@ el.form.querySelector(".presets").addEventListener("click", (e) => {
   renderPicker();
 });
 
+// domyślna data wydarzenia: dzień oglądany na telefonie, na komputerze dziś (albo poniedziałek oglądanego tygodnia)
+function defaultEventDate() {
+  const week = weekDates();
+  if (isMobile()) return toKey(week[state.activeIdx]);
+  const t = toKey(today());
+  return week.some((d) => toKey(d) === t) ? t : toKey(week[0]);
+}
+
+function syncDialogMode() {
+  const ev = el.oneoff.checked;
+  const editing = Boolean(state.editingId);
+  el.dateField.hidden = !ev;
+  el.daysField.hidden = ev;
+  el.kicker.textContent = editing ? "Korekta" : ev ? "Jednorazowo" : "Nowa rubryka";
+  el.title.textContent = editing
+    ? (ev ? "Edytuj wydarzenie" : "Edytuj nawyk")
+    : (ev ? "Dodaj wydarzenie" : "Dodaj nawyk");
+  el.name.placeholder = ev ? "np. Wizyta u dentysty" : "np. Poranny spacer";
+  el.formError.textContent = "";
+}
+el.oneoff.addEventListener("change", syncDialogMode);
+
 function openDialog(habit = null) {
   state.editingId = habit?.id ?? null;
   el.name.value = habit?.name ?? "";
-  pickedDays = new Set(habit?.days ?? [1, 2, 3, 4, 5, 6, 7]);
-  el.kicker.textContent = habit ? "Korekta" : "Nowa rubryka";
-  el.title.textContent = habit ? "Edytuj nawyk" : "Nowy nawyk";
+  const ev = habit ? isEvent(habit) : false;
+  pickedDays = new Set(habit && !ev ? habit.days : [1, 2, 3, 4, 5, 6, 7]);
+  el.oneoff.checked = ev;
+  el.date.value = ev ? habit.date : defaultEventDate();
+  syncDialogMode();
   el.del.hidden = !habit;
   disarmDelete();
   el.formError.textContent = "";
@@ -334,16 +390,35 @@ el.index.addEventListener("click", (e) => {
 el.form.addEventListener("submit", (e) => {
   e.preventDefault();
   const name = el.name.value.trim().replace(/\s+/g, " ");
+  const ev = el.oneoff.checked;
   const days = [...pickedDays].sort((a, b) => a - b);
-  if (!name) { el.formError.textContent = "Nadaj nawykowi nazwę."; el.name.focus(); return; }
-  if (!days.length) { el.formError.textContent = "Wybierz przynajmniej jeden dzień."; return; }
+  if (!name) { el.formError.textContent = ev ? "Nadaj wydarzeniu nazwę." : "Nadaj nawykowi nazwę."; el.name.focus(); return; }
+  if (ev && !/^\d{4}-\d{2}-\d{2}$/.test(el.date.value)) { el.formError.textContent = "Wybierz datę wydarzenia."; return; }
+  if (!ev && !days.length) { el.formError.textContent = "Wybierz przynajmniej jeden dzień."; return; }
 
-  const op = state.editingId
-    ? store.updateHabit(state.editingId, { name, days })
+  const fields = ev
+    ? { name, date: el.date.value, days: [] }
     // nowy nawyk obowiązuje od poniedziałku bieżącego tygodnia (żeby dało się uzupełnić ostatnie dni)
-    : store.addHabit({ name, days, start: toKey(startOfWeek(today())) });
+    : { name, days, date: null };
+  const prev = state.habits.find((h) => h.id === state.editingId);
+  if (prev && !ev && isEvent(prev)) fields.start = toKey(startOfWeek(today()));
+  const op = state.editingId
+    ? store.updateHabit(state.editingId, fields)
+    : store.addHabit(ev ? fields : { ...fields, start: toKey(startOfWeek(today())) });
   Promise.resolve(op).catch((err) => console.error("Zapis nieudany", err));
   closeDialog();
+
+  // po dodaniu wydarzenia pokaż tydzień i dzień, na który wypada
+  if (ev) {
+    const d = fromKey(fields.date);
+    const ws = startOfWeek(d);
+    const changed = toKey(ws) !== toKey(state.weekStart);
+    state.weekStart = ws;
+    state.activeIdx = isoDow(d) - 1;
+    if (changed) subscribeWeek();
+    render();
+    scrollToActive(!changed);
+  }
 });
 
 let armTimer = 0;

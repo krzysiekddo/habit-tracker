@@ -317,6 +317,23 @@ button { font: inherit; color: inherit; cursor: pointer; }
   text-decoration-thickness: 2px;
 }
 
+.habit-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 5px 1px;
+  vertical-align: 3px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.habit[aria-pressed="true"] .habit-tag { text-decoration: none; }
+
 .day-empty {
   margin: auto 0;
   padding: 24px 12px;
@@ -394,6 +411,33 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .index-days span.on { background: var(--ink); color: var(--paper); }
 .index-days span.off { border-style: dotted; }
+
+.index-sub {
+  padding: 28px 0 10px;
+  border-bottom: var(--rule) solid var(--ink);
+  font-family: var(--display);
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1;
+}
+.index-date {
+  display: grid;
+  justify-items: start;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.index-date b { font-family: var(--display); font-weight: 400; font-size: 28px; letter-spacing: 0; line-height: 1; }
+.index-when {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.index-row.is-past .index-name { text-decoration: line-through; text-decoration-thickness: 2px; }
+.index-row.is-past .index-no,
+.index-row.is-past .index-when { opacity: .45; }
 
 .index-empty {
   padding: 28px 0;
@@ -525,6 +569,48 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .day-toggle[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
+.oneoff {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: -4px 0 22px;
+  cursor: pointer;
+  user-select: none;
+}
+.oneoff input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.oneoff-box {
+  position: relative;
+  flex: none;
+  width: 28px; height: 28px;
+  border: var(--rule) solid var(--ink);
+  background: var(--paper);
+}
+.oneoff input:checked + .oneoff-box { background: var(--ink); }
+.oneoff input:checked + .oneoff-box::after {
+  content: "";
+  position: absolute;
+  left: 7px; top: 1px;
+  width: 8px; height: 15px;
+  border: solid var(--paper);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+.oneoff input:focus-visible + .oneoff-box { outline: 3px solid var(--ink); outline-offset: 3px; }
+.oneoff-text {
+  font-size: 13px; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+}
+
+.field input[type="date"] {
+  font-family: var(--display);
+  font-size: 24px;
+  min-height: 52px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+.field input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; transform: scale(1.4); }
+
 .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 
 .form-error { min-height: 1.2em; margin: -6px 0 12px; font-style: italic; font-family: var(--serif); }
@@ -637,7 +723,24 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .habit[aria-pressed="true"] .box::after { left: 8px; top: 2px; width: 9px; height: 17px; }
   .habit-name { font-size: 23px; }
 
-  .day-empty { font-size: 22px; }
+  .habit-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 5px 1px;
+  vertical-align: 3px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.habit[aria-pressed="true"] .habit-tag { text-decoration: none; }
+
+.day-empty { font-size: 22px; }
 
   .index { margin-top: 44px; }
   .index-head .btn { display: none; }
@@ -648,7 +751,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   }
   .index-no { grid-area: no; font-size: 24px; }
   .index-name { grid-area: name; font-size: 20px; }
-  .index-days { grid-area: days; }
+  .index-days, .index-when { grid-area: days; }
   .index-row .btn { grid-area: edit; }
   .index-days span { width: 21px; height: 21px; font-size: 9px; }
 
