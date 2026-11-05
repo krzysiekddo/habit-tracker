@@ -82,3 +82,7 @@ Dodanie nowego motywu:
 2. Dopisz motyw do listy w `js/themes.js` (id, nazwa PL/EN, krótki opis).
 3. Jeśli używa nowej czcionki — dodaj plik do `fonts/` i `@font-face` na górze `css/themes.css`
    (oraz do listy plików w `sw.js`, żeby działał offline).
+
+Zdjęcia w motywie „Szkło” pochodzą z Unsplash (licencja Unsplash):
+Fabio Fistarol (Nowy Jork w dzień), Ryan Fleischer (Nowy Jork nocą).
+Są wczytywane z images.unsplash.com i zapamiętywane przez aplikację do pracy offline.

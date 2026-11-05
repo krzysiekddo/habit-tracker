@@ -497,7 +497,25 @@ function applySkin(id) {
   try { localStorage.setItem("habits:skin", id); } catch { /* ignoruj */ }
   syncThemeColor();
 }
+const glassCtl = document.getElementById("glass-ctl");
+const glassRange = document.getElementById("glass-range");
+const glassVal = document.getElementById("glass-val");
+function readGlass() {
+  try { const g = localStorage.getItem("habits:glass"); if (g !== null && !isNaN(+g)) return Math.max(0, Math.min(100, +g)); } catch { /* ignoruj */ }
+  return 50;
+}
+function applyGlass(v, save) {
+  document.documentElement.style.setProperty("--glass-t", String(1 - v / 100));
+  glassRange.value = String(v);
+  glassRange.style.setProperty("--fill", `${v}%`);
+  glassVal.textContent = `${v}%`;
+  if (save) { try { localStorage.setItem("habits:glass", String(v)); } catch { /* ignoruj */ } }
+}
+applyGlass(readGlass(), false);
+glassRange.addEventListener("input", () => applyGlass(Number(glassRange.value), true));
+
 function renderSkins() {
+  glassCtl.hidden = currentSkin() !== "szklo";
   const mode = document.documentElement.dataset.theme || "light";
   const cur = currentSkin();
   const L = document.documentElement.lang === "en" ? "en" : "pl";

@@ -1,11 +1,11 @@
 // Service worker: aplikacja działa offline.
 // Pliki strony: najpierw sieć (zawsze świeża wersja), w razie braku — kopia z pamięci.
 // Biblioteki Firebase z gstatic: najpierw pamięć (wersja jest przypięta, więc się nie zmienia).
-const CACHE = "habits-v10";
+const CACHE = "habits-v11";
 const SHELL = [
   "./", "index.html", "css/styles.css", "css/themes.css", "manifest.webmanifest",
   "js/app.js", "js/dates.js", "js/i18n.js", "js/themes.js", "js/firebase-config.js", "js/store-local.js", "js/store-firebase.js",
-  "fonts/ultra.woff", "fonts/young-serif.woff", "fonts/jost.woff", "fonts/archivo-black.woff", "fonts/archivo.woff", "fonts/fredoka.woff", "fonts/nunito.woff", "images/landscape-light.svg", "images/landscape-dark.svg",
+  "fonts/ultra.woff", "fonts/young-serif.woff", "fonts/jost.woff", "fonts/archivo-black.woff", "fonts/archivo.woff", "fonts/fredoka.woff", "fonts/nunito.woff",
   "icons/icon-192.png", "icons/apple-touch-icon.png",
 ];
 
@@ -38,10 +38,12 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  if (url.hostname === "www.gstatic.com" && url.pathname.startsWith("/firebasejs/")) {
+  if ((url.hostname === "www.gstatic.com" && url.pathname.startsWith("/firebasejs/")) ||
+      url.hostname === "images.unsplash.com") {
     e.respondWith(
       caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-        if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
+        // zdjęcia z Unsplash przychodzą jako „opaque” (status 0) — też je zapamiętujemy
+        if (res.ok || res.type === "opaque") { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
         return res;
       }))
     );

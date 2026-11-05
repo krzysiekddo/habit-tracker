@@ -51,6 +51,7 @@ const STR = {
     toLight: "Włącz tryb jasny", toDark: "Włącz tryb ciemny",
     langBtn: "EN", langAria: "Switch to English",
     skinAria: "Wybierz motyw", skinKicker: "Wygląd", skinTitle: "Motyw", skinSample: "Spacer",
+    glassLabel: "Przezroczystość szkła", glassTinted: "Przyciemnione", glassClear: "Przejrzyste",
   },
   en: {
     issueKind: "Weekly edition",
@@ -81,6 +82,7 @@ const STR = {
     toLight: "Switch to light mode", toDark: "Switch to dark mode",
     langBtn: "PL", langAria: "Przełącz na polski",
     skinAria: "Choose theme", skinKicker: "Appearance", skinTitle: "Theme", skinSample: "Walk",
+    glassLabel: "Glass transparency", glassTinted: "Tinted", glassClear: "Clear",
   },
 };
 

@@ -2,7 +2,7 @@
 export const SKINS = [
   { id: "gazeta",   name: { pl: "Gazeta",   en: "Newspaper" }, desc: { pl: "Czerń i biel, grube ramki",       en: "Black & white, heavy frames" } },
   { id: "marker",   name: { pl: "Marker",   en: "Marker" },    desc: { pl: "Żółty zakreślacz, wersaliki",     en: "Yellow highlighter, all caps" } },
-  { id: "szklo",    name: { pl: "Szkło",    en: "Glass" },     desc: { pl: "Pejzaż w tle, szklane karty",     en: "Landscape, frosted glass" } },
+  { id: "szklo",    name: { pl: "Szkło",    en: "Glass" },     desc: { pl: "Nowy Jork w tle, szkło jak w iOS", en: "New York backdrop, iOS-like glass" } },
   { id: "pastel",   name: { pl: "Pastel",   en: "Pastel" },    desc: { pl: "Zaokrąglony, lawendowy",          en: "Rounded, lavender" } },
 ];
 export const DEFAULT_SKIN = "gazeta";

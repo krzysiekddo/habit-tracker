@@ -135,69 +135,81 @@
 
 
 /* ==========================================================
-   4. SZKŁO — pejzaż w tle + półprzezroczyste, rozmyte karty (w stylu Liquid Glass)
-   Jasny: świt nad jeziorem. Ciemny: noc z księżycem.
+   4. SZKŁO — zdjęcie Nowego Jorku w tle + szkło w stylu Liquid Glass (iOS)
+   Jasny: Manhattan w dzień. Ciemny: Manhattan nocą.
+   Zdjęcia: Unsplash (licencja Unsplash) — Fabio Fistarol (dzień), Ryan Fleischer (noc).
+   --glass-t (0–1) = ile „zabarwienia” ma szkło; ustawia suwak w oknie motywów.
    ========================================================== */
 [data-skin="szklo"] {
-  --paper: #a9cbf5; --card: rgba(255, 255, 255, .34); --ink: #0f1e3d; --line: rgba(15, 30, 61, .22);
-  --accent: rgba(18, 32, 72, .82); --on-accent: #fff; --accent-line: rgba(255, 255, 255, .45);
-  --veil: rgba(169, 203, 245, .25);
-  --backdrop: url("../images/landscape-light.svg");
-  --glass: blur(22px) saturate(180%);
-  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, .75), inset 0 0 0 1px rgba(255, 255, 255, .35);
+  --glass-t: .5;
+  --paper: #9fc1e8;
+  --card: rgba(255, 255, 255, calc(.06 + var(--glass-t) * .62));
+  --ink: #0b1730; --line: rgba(255, 255, 255, .55);
+  --accent: rgba(10, 22, 52, .78); --on-accent: #fff; --accent-line: rgba(255, 255, 255, .55);
+  --veil: rgba(160, 190, 230, .18);
+  --backdrop: url("https://images.unsplash.com/photo-1611324022422-cc8127689691?auto=format&fit=crop&w=2400&q=70"),
+              linear-gradient(180deg, #7fb2ec 0%, #c9dcf3 60%, #8a9bb3 100%);
+  --glass: blur(calc(4px + var(--glass-t) * 26px)) saturate(190%) brightness(1.04);
+  --sheen: linear-gradient(140deg, rgba(255, 255, 255, .42) 0%, rgba(255, 255, 255, .08) 38%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, .12) 100%);
+  --glass-edge: inset 0 1px 1px rgba(255, 255, 255, .9), inset 0 -1px 1px rgba(255, 255, 255, .25), inset 0 0 0 1px rgba(255, 255, 255, .35);
   --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
   --display-weight: 700; --display-case: none;
   --serif: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
   --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
   --nameplate: clamp(64px, 15vw, 190px); --nameplate-m: 62px;
   --rule: 1px; --rule-heavy: 1px; --shadow: 0px;
-  --radius-xs: 8px; --radius-sm: 14px; --radius: 22px; --radius-lg: 30px;
-  --shadow-xs: var(--glass-edge), 0 4px 12px rgba(15, 30, 61, .12);
-  --shadow-sm: var(--glass-edge), 0 6px 18px rgba(15, 30, 61, .14);
-  --shadow-sm-hover: var(--glass-edge), 0 10px 26px rgba(15, 30, 61, .2);
-  --shadow-md: var(--glass-edge), 0 12px 36px rgba(15, 30, 61, .16);
-  --shadow-lg: var(--glass-edge), 0 24px 60px rgba(15, 30, 61, .28);
-  --shadow-none: var(--glass-edge), 0 2px 6px rgba(15, 30, 61, .1);
-  --shadow-fab: inset 0 1px 0 rgba(255, 255, 255, .35), 0 12px 30px rgba(15, 30, 61, .35);
-  --shadow-fab-press: inset 0 1px 0 rgba(255, 255, 255, .35), 0 4px 10px rgba(15, 30, 61, .3);
-  --press: scale(.97); --lift: translateY(-1px);
+  --radius-xs: 8px; --radius-sm: 14px; --radius: 24px; --radius-lg: 32px;
+  --shadow-xs: var(--glass-edge), 0 4px 14px rgba(5, 15, 40, .16);
+  --shadow-sm: var(--glass-edge), 0 6px 20px rgba(5, 15, 40, .18);
+  --shadow-sm-hover: var(--glass-edge), 0 10px 28px rgba(5, 15, 40, .24);
+  --shadow-md: var(--glass-edge), 0 14px 40px rgba(5, 15, 40, .2);
+  --shadow-lg: var(--glass-edge), 0 28px 70px rgba(5, 15, 40, .32);
+  --shadow-none: var(--glass-edge), 0 2px 6px rgba(5, 15, 40, .12);
+  --shadow-fab: inset 0 1px 1px rgba(255, 255, 255, .45), 0 14px 34px rgba(5, 15, 40, .38);
+  --shadow-fab-press: inset 0 1px 1px rgba(255, 255, 255, .45), 0 4px 10px rgba(5, 15, 40, .32);
+  --press: scale(.96); --lift: translateY(-1px);
   color-scheme: light;
 }
 [data-skin="szklo"][data-theme="dark"] {
-  --paper: #0f1640; --card: rgba(22, 28, 70, .38); --ink: #eef1ff; --line: rgba(255, 255, 255, .2);
-  --accent: rgba(255, 255, 255, .88); --on-accent: #0d1433; --accent-line: rgba(255, 255, 255, .6);
-  --veil: rgba(5, 8, 25, .35);
-  --backdrop: url("../images/landscape-dark.svg");
-  --glass-edge: inset 0 1px 0 rgba(255, 255, 255, .22), inset 0 0 0 1px rgba(255, 255, 255, .1);
-  --shadow-xs: var(--glass-edge), 0 4px 12px rgba(0, 0, 0, .3);
-  --shadow-sm: var(--glass-edge), 0 6px 18px rgba(0, 0, 0, .35);
-  --shadow-sm-hover: var(--glass-edge), 0 10px 26px rgba(0, 0, 0, .4);
-  --shadow-md: var(--glass-edge), 0 12px 36px rgba(0, 0, 0, .35);
-  --shadow-lg: var(--glass-edge), 0 24px 60px rgba(0, 0, 0, .5);
+  --paper: #0a1424;
+  --card: rgba(18, 24, 44, calc(.06 + var(--glass-t) * .6));
+  --ink: #f1f4ff; --line: rgba(255, 255, 255, .2);
+  --accent: rgba(255, 255, 255, .9); --on-accent: #0b1428; --accent-line: rgba(255, 255, 255, .7);
+  --veil: rgba(3, 8, 20, .3);
+  --backdrop: url("https://images.unsplash.com/photo-1767908853602-26e1787c7db4?auto=format&fit=crop&w=2400&q=70"),
+              linear-gradient(180deg, #050b18 0%, #12324a 70%, #0a1424 100%);
+  --sheen: linear-gradient(140deg, rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, .03) 38%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, .06) 100%);
+  --glass-edge: inset 0 1px 1px rgba(255, 255, 255, .32), inset 0 -1px 1px rgba(255, 255, 255, .08), inset 0 0 0 1px rgba(255, 255, 255, .12);
+  --shadow-xs: var(--glass-edge), 0 4px 14px rgba(0, 0, 0, .35);
+  --shadow-sm: var(--glass-edge), 0 6px 20px rgba(0, 0, 0, .4);
+  --shadow-sm-hover: var(--glass-edge), 0 10px 28px rgba(0, 0, 0, .45);
+  --shadow-md: var(--glass-edge), 0 14px 40px rgba(0, 0, 0, .4);
+  --shadow-lg: var(--glass-edge), 0 28px 70px rgba(0, 0, 0, .55);
   --shadow-none: var(--glass-edge), 0 2px 6px rgba(0, 0, 0, .3);
-  --shadow-fab: inset 0 1px 0 rgba(255, 255, 255, .6), 0 12px 30px rgba(0, 0, 0, .5);
-  --shadow-fab-press: inset 0 1px 0 rgba(255, 255, 255, .6), 0 4px 10px rgba(0, 0, 0, .45);
+  --shadow-fab: inset 0 1px 1px rgba(255, 255, 255, .8), 0 14px 34px rgba(0, 0, 0, .5);
+  --shadow-fab-press: inset 0 1px 1px rgba(255, 255, 255, .8), 0 4px 10px rgba(0, 0, 0, .45);
   color-scheme: dark;
 }
 
-/* szklane powierzchnie */
+/* szklane powierzchnie: rozmycie + połysk */
 [data-skin="szklo"] :is(.day, .btn, .sheet, .chip, .day-toggle, .theme-toggle, .lang-toggle, .skin-toggle,
-  .fab, .strip-day, .masthead, .index, .colophon, .weekbar-title, .cover) {
+  .fab, .strip-day, .masthead, .index, .colophon, .weekbar-title, .cover, .skin-card) {
   -webkit-backdrop-filter: var(--glass);
   backdrop-filter: var(--glass);
+  background-image: var(--sheen);
 }
-/* nagłówek, spis i stopka dostają własne szklane panele, żeby tekst był czytelny na tle pejzażu */
+/* nagłówek, spis i stopka dostają własne szklane panele, żeby tekst był czytelny na tle zdjęcia */
 [data-skin="szklo"] :is(.masthead, .index, .colophon, .cover) {
   margin-top: 16px;
   padding: 14px 18px 16px;
-  background: var(--card);
-  border: 1px solid var(--accent-line);
+  background-color: var(--card);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
 }
 [data-skin="szklo"] .weekbar-title {
   padding: 6px 10px 8px;
-  background: var(--card);
+  background-color: var(--card);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-xs);
 }
@@ -205,8 +217,11 @@
 [data-skin="szklo"] .index { margin-top: 40px; }
 [data-skin="szklo"] .index-row:last-child { border-bottom: 0; }
 [data-skin="szklo"] .nameplate { letter-spacing: -.045em; }
-[data-skin="szklo"] .day-head { border-bottom-color: var(--line); }
 [data-skin="szklo"] .day.is-today .day-head { border-bottom-color: transparent; }
+[data-skin="szklo"] :is(.box, .oneoff-box) { border-color: rgba(11, 23, 48, .45); }
+[data-skin="szklo"][data-theme="dark"] :is(.box, .oneoff-box) { border-color: rgba(255, 255, 255, .45); }
+[data-skin="szklo"] .habits li + li .habit,
+[data-skin="szklo"] .index-row { border-color: var(--line); }
 [data-skin="szklo"] .theme-toggle,
 [data-skin="szklo"] .lang-toggle,
 [data-skin="szklo"] .skin-toggle { top: 12px; }
@@ -226,9 +241,7 @@
 }
 /* podgląd na karcie w oknie motywów */
 .skin-card[data-skin="szklo"] {
-  background-image: linear-gradient(to top, var(--paper) 38%, transparent 80%), var(--backdrop);
+  background-image: linear-gradient(to top, var(--paper) 30%, transparent 85%), var(--backdrop);
   background-size: cover;
-  background-position: center 60%;
+  background-position: center;
 }
-[data-skin="szklo"] :is(.box, .oneoff-box) { border-color: rgba(15, 30, 61, .4); }
-[data-skin="szklo"][data-theme="dark"] :is(.box, .oneoff-box) { border-color: rgba(255, 255, 255, .4); }
