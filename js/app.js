@@ -9,6 +9,22 @@ import { SKINS, DEFAULT_SKIN } from "./themes.js";
 const useFirebase = Boolean(firebaseConfig.apiKey);
 const store = await import(useFirebase ? "./store-firebase.js" : "./store-local.js");
 
+// ---------- animacje ----------
+// Elementy są przerysowywane przy każdej zmianie, więc animacjom podajemy ujemne opóźnienie
+// równe czasowi, który już minął — dzięki temu nie zaczynają się od nowa przy kolejnym renderze.
+const motion = { introStart: 0, knownIds: null, fresh: new Map(), toggled: null };
+const now = () => performance.now();
+function shiftFor(t0, max) {
+  const el = now() - t0;
+  return el < max ? `${-Math.round(el)}ms` : null;
+}
+function tickIntro() {
+  if (!motion.introStart) return;
+  const s = shiftFor(motion.introStart, 2600);
+  if (s) document.documentElement.style.setProperty("--intro-shift", s);
+  else { document.documentElement.classList.remove("intro"); motion.introStart = 0; }
+}
+
 // ---------- stan ----------
 const state = {
   habits: [],
@@ -82,8 +98,20 @@ el.signIn.addEventListener("click", async () => {
 el.signOut.addEventListener("click", () => store.signOut());
 
 function start() {
+  if (!motion.introStart && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    motion.introStart = now();
+    document.documentElement.classList.add("intro");
+    document.documentElement.style.setProperty("--intro-shift", "0ms");
+    setTimeout(tickIntro, 2700);
+  }
   stop();
-  unsubHabits = store.watchHabits((list) => { state.habits = list; render(); });
+  unsubHabits = store.watchHabits((list) => {
+    const ids = new Set(list.map((h) => h.id));
+    if (motion.knownIds) for (const id of ids) if (!motion.knownIds.has(id)) motion.fresh.set(id, now());
+    motion.knownIds = ids;
+    state.habits = list;
+    render();
+  });
   subscribeWeek();
   renderHeader();
   requestAnimationFrame(() => scrollToActive(false));
@@ -125,6 +153,7 @@ function renderHeader() {
 }
 
 function render() {
+  tickIntro();
   renderHeader();
   renderWeek();
   renderStrip();
@@ -152,11 +181,16 @@ function renderWeek() {
     const items = hs.map((h) => {
       const k = `${h.id}|${key}`;
       const on = state.done.has(k);
-      return `<li><button class="habit" type="button" aria-pressed="${on}" data-k="${esc(k)}">
-        <span class="box" aria-hidden="true"></span><span class="habit-name">${esc(h.name)}${isEvent(h) ? `<span class="habit-tag">${t("eventTag")}</span>` : ""}</span></button></li>`;
+      const fresh = motion.fresh.has(h.id) ? shiftFor(motion.fresh.get(h.id), 1200) : null;
+      const just = on && motion.toggled?.k === k ? shiftFor(motion.toggled.t, 900) : null;
+      const liAttr = fresh ? ` class="is-new" style="--anim-shift:${fresh}"` : "";
+      const btnCls = just ? "habit just-checked" : "habit";
+      const btnStyle = just ? ` style="--anim-shift:${just}"` : "";
+      return `<li${liAttr}><button class="${btnCls}"${btnStyle} type="button" aria-pressed="${on}" data-k="${esc(k)}">
+        <span class="box" aria-hidden="true"></span><span class="habit-name"><span class="habit-text">${esc(h.name)}</span>${isEvent(h) ? `<span class="habit-tag">${t("eventTag")}</span>` : ""}</span></button></li>`;
     }).join("");
 
-    return `<section class="${cls.join(" ")}" data-idx="${i}" aria-label="${N().long[i]} ${d.getDate()} ${monthGen(d)}">
+    return `<section class="${cls.join(" ")}" style="--i:${3 + i}" data-idx="${i}" aria-label="${N().long[i]} ${d.getDate()} ${monthGen(d)}">
       <header class="day-head">
         <span class="day-dow">${N().long[i]}</span>
         <span class="day-num">${d.getDate()}</span>
@@ -196,8 +230,12 @@ function renderIndex() {
   const upcoming = events.filter((h) => h.date >= tKey);
   const past = events.filter((h) => h.date < tKey).reverse();
 
+  const freshAttr = (h) => {
+    const s = motion.fresh.has(h.id) ? shiftFor(motion.fresh.get(h.id), 1200) : null;
+    return s ? ` is-new" style="--anim-shift:${s}` : "";
+  };
   const habitRow = (h, i) => `
-    <li class="index-row">
+    <li class="index-row${freshAttr(h)}">
       <span class="index-no">${String(i + 1).padStart(2, "0")}</span>
       <span class="index-name">${esc(h.name)}</span>
       <span class="index-days" aria-label="${t("daysAria", { d: h.days.map((d) => N().short[d - 1]).join(", ") })}">
@@ -209,7 +247,7 @@ function renderIndex() {
   const eventRow = (h) => {
     const d = fromKey(h.date);
     return `
-    <li class="index-row ${h.date < tKey ? "is-past" : ""}">
+    <li class="index-row ${h.date < tKey ? "is-past" : ""}${freshAttr(h)}">
       <span class="index-no index-date"><b>${d.getDate()}</b>${N().monShort[d.getMonth()]}</span>
       <span class="index-name">${esc(h.name)}</span>
       <span class="index-when">${N().long[isoDow(d) - 1]}${d.getFullYear() !== today().getFullYear() ? " " + d.getFullYear() : ""}</span>
@@ -237,6 +275,7 @@ el.week.addEventListener("click", (e) => {
   const next = !state.done.has(k);
   // natychmiastowa reakcja interfejsu
   if (next) state.done.add(k); else state.done.delete(k);
+  motion.toggled = next ? { k, t: now() } : null;
   render();
   if (navigator.vibrate && isMobile()) navigator.vibrate(8);
   Promise.resolve(store.setDone(habitId, date, next)).catch((err) => console.error("Zapis nieudany", err));

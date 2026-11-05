@@ -1,0 +1,172 @@
+/* ==========================================================
+   ANIMACJE
+   1. Wejście przy otwarciu strony (klasa .intro na <html>, sekcja po sekcji wg --i)
+   2. Pojawienie się nowo dodanego nawyku / wydarzenia (.is-new)
+   3. Odhaczenie: ptaszek + animowane przekreślenie (.just-checked)
+   Każdy motyw ustawia własne animacje przez zmienne poniżej.
+   --intro-shift / --anim-shift (ujemne opóźnienia) ustawia JS, żeby przerysowanie
+   elementu nie zaczynało animacji od nowa.
+   ========================================================== */
+
+/* ---------- ustawienia motywów ---------- */
+:root,
+[data-skin="gazeta"] {
+  --intro-anim: gz-press .6s cubic-bezier(.2, .9, .3, 1);
+  --intro-stagger: 90ms;
+  --new-anim: gz-press .5s cubic-bezier(.2, .9, .3, 1);
+  --tick-anim: gz-stamp .32s cubic-bezier(.2, .9, .3, 1);
+  --strike-c: currentColor; --strike-w: 3px; --strike-y: 56%;
+  --strike-anim: strike .26s cubic-bezier(.8, 0, .2, 1);
+}
+[data-skin="marker"] {
+  --intro-anim: mk-reveal .7s cubic-bezier(.65, 0, .35, 1);
+  --intro-stagger: 110ms;
+  --new-anim: mk-reveal .6s cubic-bezier(.65, 0, .35, 1);
+  --tick-anim: mk-tick .35s ease-out;
+  --strike-c: var(--accent); --strike-w: 1.15em; --strike-y: 55%;
+  --strike-anim: strike .38s cubic-bezier(.5, 0, .2, 1);
+}
+[data-skin="szklo"] {
+  --intro-anim: gl-bubble .8s cubic-bezier(.2, .8, .2, 1);
+  --intro-stagger: 85ms;
+  --new-anim: gl-bubble .65s cubic-bezier(.2, .8, .2, 1);
+  --tick-anim: gl-pop .5s cubic-bezier(.3, 1.6, .5, 1);
+  --strike-c: currentColor; --strike-w: 2px; --strike-y: 56%;
+  --strike-anim: strike .5s cubic-bezier(.2, .8, .2, 1);
+}
+[data-skin="pastel"] {
+  --intro-anim: ps-draw .75s cubic-bezier(.45, .05, .25, 1);
+  --intro-stagger: 100ms;
+  --new-anim: ps-draw .6s cubic-bezier(.45, .05, .25, 1);
+  --tick-anim: ps-bounce .55s cubic-bezier(.3, 1.8, .5, 1);
+  --strike-c: var(--accent); --strike-w: 4px; --strike-y: 56%;
+  --strike-anim: strike .45s cubic-bezier(.45, .05, .25, 1);
+}
+
+
+/* ---------- 1. wejście ---------- */
+html.intro :is(.masthead, .weekbar, .strip, .day, .index) {
+  animation: var(--intro-anim) backwards;
+  animation-delay: calc(var(--i, 0) * var(--intro-stagger) + var(--intro-shift, 0ms));
+}
+/* gazeta: karty dnia „dociskane” — cień rośnie przy uderzeniu */
+html.intro[data-skin="gazeta"] .day {
+  animation: gz-press .6s cubic-bezier(.2, .9, .3, 1) backwards, gz-ink .6s cubic-bezier(.2, .9, .3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * var(--intro-stagger) + var(--intro-shift, 0ms));
+}
+
+
+/* ---------- 2. nowy nawyk ---------- */
+.habits li.is-new,
+.index-row.is-new {
+  animation: var(--new-anim) backwards;
+  animation-delay: var(--anim-shift, 0ms);
+}
+
+
+/* ---------- 3. odhaczenie ---------- */
+.habit-text {
+  background-image: linear-gradient(var(--strike-c), var(--strike-c));
+  background-repeat: no-repeat;
+  background-position: 0 var(--strike-y);
+  background-size: 0% var(--strike-w);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.habit[aria-pressed="true"] .habit-text { background-size: 100% var(--strike-w); }
+.habit.just-checked .habit-text {
+  animation: var(--strike-anim) backwards;
+  animation-delay: calc(var(--anim-shift, 0ms) + 80ms);
+}
+.habit.just-checked .box {
+  animation: var(--tick-anim) backwards;
+  animation-delay: var(--anim-shift, 0ms);
+}
+/* marker: odhaczony tekst zakreślony — kolor tekstu dopasowany do zakreślacza */
+[data-skin="marker"] .habit[aria-pressed="true"] .habit-text { color: var(--on-accent); }
+@keyframes strike { from { background-size: 0% var(--strike-w); } }
+
+
+/* ==========================================================
+   KLATKI KLUCZOWE
+   ========================================================== */
+
+/* GAZETA — odbicie na prasie: element spada z góry, uderza i lekko się sprężynuje */
+@keyframes gz-press {
+  0%   { opacity: 0; transform: scale(1.22) rotate(-.8deg); filter: blur(3px); }
+  50%  { opacity: 1; transform: scale(.975) rotate(0); filter: blur(0); }
+  72%  { transform: scale(1.008); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+@keyframes gz-ink {
+  0%, 45% { box-shadow: 0 0 0 var(--line); }
+  60%     { box-shadow: 1px 1px 0 var(--line); }
+}
+@keyframes gz-stamp {
+  0%   { transform: scale(1.6); opacity: 0; }
+  60%  { transform: scale(.9); opacity: 1; }
+  100% { transform: none; }
+}
+
+/* MARKER — pociągnięcie zakreślaczem odsłania element */
+@keyframes mk-reveal {
+  0%        { clip-path: inset(0 100% 0 0); }
+  45%, 100% { clip-path: inset(-12px -12px -12px -12px); }
+}
+@keyframes mk-bar {
+  0%   { transform: scaleX(0); transform-origin: left center; }
+  45%  { transform: scaleX(1); transform-origin: left center; }
+  55%  { transform: scaleX(1); transform-origin: right center; }
+  100% { transform: scaleX(0); transform-origin: right center; }
+}
+html.intro[data-skin="marker"] :is(.masthead, .weekbar, .strip, .day, .index),
+[data-skin="marker"] :is(.habits li.is-new, .index-row.is-new) { position: relative; }
+html.intro[data-skin="marker"] :is(.masthead, .weekbar, .strip, .day, .index)::after,
+[data-skin="marker"] :is(.habits li.is-new, .index-row.is-new)::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  z-index: 6;
+  background: var(--accent);
+  transform: scaleX(0);
+  pointer-events: none;
+}
+html.intro[data-skin="marker"] :is(.masthead, .weekbar, .strip, .day, .index)::after {
+  animation: mk-bar .7s cubic-bezier(.65, 0, .35, 1) backwards;
+  animation-delay: calc(var(--i, 0) * var(--intro-stagger) + var(--intro-shift, 0ms));
+}
+[data-skin="marker"] :is(.habits li.is-new, .index-row.is-new)::after {
+  animation: mk-bar .6s cubic-bezier(.65, 0, .35, 1) backwards;
+  animation-delay: var(--anim-shift, 0ms);
+}
+@keyframes mk-tick {
+  0%   { transform: rotate(-12deg) scale(.6); }
+  60%  { transform: rotate(4deg) scale(1.1); }
+  100% { transform: none; }
+}
+
+/* SZKŁO — bąbelki: wypływają od dołu, zaokrąglone, rozmyte, ze sprężystym dojściem */
+@keyframes gl-bubble {
+  0%   { opacity: 0; transform: translateY(34px) scale(.62); filter: blur(14px); border-radius: 80px; }
+  55%  { opacity: 1; transform: translateY(-6px) scale(1.035); filter: blur(0); }
+  78%  { transform: translateY(2px) scale(.992); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+@keyframes gl-pop {
+  0%   { transform: scale(.4); border-radius: 50%; }
+  55%  { transform: scale(1.25); }
+  100% { transform: none; }
+}
+
+/* PASTEL — rysowane: element „domalowuje się” po przekątnej, lekko się kołysząc */
+@keyframes ps-draw {
+  0%   { opacity: .25; clip-path: polygon(0 0, 0 0, 0 0); transform: rotate(-1.5deg) translateY(6px); }
+  70%  { opacity: 1; clip-path: polygon(0 0, 230% 0, 0 230%); transform: rotate(.5deg); }
+  100% { opacity: 1; clip-path: polygon(0 0, 230% 0, 0 230%); transform: none; }
+}
+@keyframes ps-bounce {
+  0%   { transform: scale(.3) rotate(-20deg); }
+  50%  { transform: scale(1.2) rotate(6deg); }
+  75%  { transform: scale(.95) rotate(-2deg); }
+  100% { transform: none; }
+}

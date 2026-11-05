@@ -336,10 +336,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   line-height: 1.2;
   overflow-wrap: anywhere;
 }
-.habit[aria-pressed="true"] .habit-name {
-  text-decoration: line-through;
-  text-decoration-thickness: 2px;
-}
+
 
 .habit-tag {
   display: inline-block;
