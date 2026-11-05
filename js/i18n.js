@@ -51,7 +51,11 @@ const STR = {
     toLight: "Włącz tryb jasny", toDark: "Włącz tryb ciemny",
     langBtn: "EN", langAria: "Switch to English",
     skinAria: "Wybierz motyw", skinKicker: "Wygląd", skinTitle: "Motyw", skinSample: "Spacer",
-    hueLabel: "Kolor", glassLabel: "Przezroczystość szkła", glassTinted: "Przyciemnione", glassClear: "Przejrzyste",
+    hueLabel: "Kolor", glassLabel: "Przezroczystość szkła",
+    statsTitle: "Statystyki", statsEmpty: "Dodaj nawyki, żeby zobaczyć statystyki.", statsLoading: "Wczytywanie…",
+    kStreak: "Obecna seria", kBest: "Najdłuższa seria", k7: "Ostatnie 7 dni", k30: "Ostatnie 30 dni", daysUnit: "dni",
+    chWeekly: "Wykonanie tydzień po tygodniu", chHeat: "Ostatnie 12 tygodni", chHabits: "Nawyki — ostatnie 30 dni",
+    less: "mniej", more: "więcej", weekShort: "T", glassTinted: "Przyciemnione", glassClear: "Przejrzyste",
   },
   en: {
     issueKind: "Weekly edition",
@@ -82,7 +86,11 @@ const STR = {
     toLight: "Switch to light mode", toDark: "Switch to dark mode",
     langBtn: "PL", langAria: "Przełącz na polski",
     skinAria: "Choose theme", skinKicker: "Appearance", skinTitle: "Theme", skinSample: "Walk",
-    hueLabel: "Color", glassLabel: "Glass transparency", glassTinted: "Tinted", glassClear: "Clear",
+    hueLabel: "Color", glassLabel: "Glass transparency",
+    statsTitle: "Statistics", statsEmpty: "Add habits to see statistics.", statsLoading: "Loading…",
+    kStreak: "Current streak", kBest: "Best streak", k7: "Last 7 days", k30: "Last 30 days", daysUnit: "days",
+    chWeekly: "Completion week by week", chHeat: "Last 12 weeks", chHabits: "Habits — last 30 days",
+    less: "less", more: "more", weekShort: "W", glassTinted: "Tinted", glassClear: "Clear",
   },
 };
 

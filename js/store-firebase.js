@@ -75,6 +75,13 @@ export function watchDone(from, to, cb) {
   });
 }
 
+export async function getDone(from, to) {
+  const snap = await getDocs(query(doneCol(), where("date", ">=", from), where("date", "<=", to)));
+  const s = new Set();
+  snap.forEach((d) => { const x = d.data(); s.add(`${x.habitId}|${x.date}`); });
+  return s;
+}
+
 // Zapisów nie „czekamy” w UI — Firestore pokazuje zmianę od razu i dosyła ją,
 // gdy jest internet. Dlatego funkcje zwracają obietnicę, ale app jej nie blokuje.
 

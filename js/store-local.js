@@ -65,6 +65,8 @@ export function watchDone(from, to, cb) {
   return () => doneListeners.delete(l);
 }
 
+export async function getDone(from, to) { return doneSet(from, to); }
+
 export async function addHabit(fields) {
   const order = data.habits.reduce((m, h) => Math.max(m, h.order), 0) + 1;
   data.habits.push({ ...fields, id: uid(), order });

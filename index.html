@@ -81,20 +81,29 @@
 
       <div class="week" id="week"></div>
 
-      <section class="index" style="--i:10" aria-labelledby="index-title">
-        <div class="index-head">
-          <h2 id="index-title" data-i18n="indexTitle">Spis nawyków</h2>
-          <button class="btn btn-sm" id="add-btn-2" type="button" data-i18n="add">+ Dodaj</button>
-        </div>
-        <ol class="index-list" id="index-list"></ol>
-      </section>
-
-      <section class="index index-events" style="--i:11" id="events-section" aria-labelledby="events-title" hidden>
+      <section class="index index-events" style="--i:10" id="events-section" aria-labelledby="events-title" hidden>
         <div class="index-head">
           <h2 id="events-title" data-i18n="events">Wydarzenia</h2>
           <button class="btn btn-sm" id="add-event-btn" type="button" data-i18n="add">+ Dodaj</button>
         </div>
         <ol class="index-list" id="events-list"></ol>
+      </section>
+
+      <section class="index collapsible" style="--i:11" id="habits-section" aria-labelledby="index-title">
+        <div class="index-head">
+          <h2 id="index-title"><button class="collapse-toggle" id="habits-toggle" type="button" aria-expanded="false" aria-controls="habits-body"><span data-i18n="indexTitle">Spis nawyków</span><span class="collapse-count" id="habits-count"></span><span class="chev" aria-hidden="true"></span></button></h2>
+          <button class="btn btn-sm" id="add-btn-2" type="button" data-i18n="add">+ Dodaj</button>
+        </div>
+        <div class="collapse-body" id="habits-body" hidden>
+          <ol class="index-list" id="index-list"></ol>
+        </div>
+      </section>
+
+      <section class="index collapsible index-stats" style="--i:12" id="stats-section" aria-labelledby="stats-title">
+        <div class="index-head">
+          <h2 id="stats-title"><button class="collapse-toggle" id="stats-toggle" type="button" aria-expanded="false" aria-controls="stats-body"><span data-i18n="statsTitle">Statystyki</span><span class="chev" aria-hidden="true"></span></button></h2>
+        </div>
+        <div class="collapse-body" id="stats-body" hidden></div>
       </section>
     </main>
 

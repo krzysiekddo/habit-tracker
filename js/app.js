@@ -56,6 +56,8 @@ const el = {
   weekLabel: $("week-label"), weekRange: $("week-range"),
   prev: $("prev-week"), next: $("next-week"), todayBtn: $("today-btn"),
   add: $("add-btn"), add2: $("add-btn-2"), fab: $("fab"),
+  habitsToggle: $("habits-toggle"), habitsBody: $("habits-body"), habitsCount: $("habits-count"),
+  statsToggle: $("stats-toggle"), statsBody: $("stats-body"),
   strip: $("strip"), week: $("week"), index: $("index-list"), events: $("events-list"), eventsSection: $("events-section"), addEvent: $("add-event-btn"), modeNote: $("mode-note"),
   dialog: $("habit-dialog"), form: $("habit-form"), name: $("habit-name"),
   picker: $("days-picker"), kicker: $("dialog-kicker"), title: $("dialog-title"),
@@ -174,6 +176,7 @@ function renderHeader() {
 
 function render() {
   tickIntro();
+  if (!el.statsBody.hidden) renderStats();
   renderHeader();
   renderWeek();
   renderStrip();
@@ -241,6 +244,7 @@ function renderStrip() {
 
 function renderIndex() {
   if (drag.active) { drag.pending = true; return; }   // nie przerywamy przeciągania
+  el.habitsCount.textContent = String(state.habits.filter((h) => !isEvent(h)).length);
   if (!state.habits.length) {
     el.index.innerHTML = `<li class="index-empty">${t("indexEmpty")}</li>`;
     el.eventsSection.hidden = true;
@@ -284,6 +288,139 @@ function renderIndex() {
     : `<li class="index-empty">${t("noRecurring")}</li>`;
   el.eventsSection.hidden = !events.length;
   el.events.innerHTML = [...upcoming, ...past].map(eventRow).join("");
+}
+
+// ---------- sekcje zwijane ----------
+function setupCollapse(toggle, body, onOpen) {
+  toggle.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") !== "true";
+    toggle.setAttribute("aria-expanded", String(open));
+    body.hidden = !open;
+    if (open) onOpen?.();
+  });
+}
+setupCollapse(el.habitsToggle, el.habitsBody);
+setupCollapse(el.statsToggle, el.statsBody, () => loadStats());
+
+// ---------- statystyki ----------
+const STATS_DAYS = 84;   // 12 tygodni
+const stats = { history: null, loading: false, from: "" };
+
+async function loadStats() {
+  const from = toKey(addDays(startOfWeek(today()), -77));
+  const to = toKey(today());
+  stats.loading = true; stats.from = from;
+  renderStats();
+  try { stats.history = await store.getDone(from, to); }
+  catch (e) { console.error("Statystyki", e); stats.history = new Set(); }
+  stats.loading = false;
+  renderStats();
+}
+
+function computeStats() {
+  const habits = state.habits.filter((h) => !isEvent(h));
+  const wk0 = toKey(state.weekStart), wk1 = toKey(addDays(state.weekStart, 6));
+  const isDone = (id, key) => (key >= wk0 && key <= wk1 ? state.done.has(`${id}|${key}`) : stats.history.has(`${id}|${key}`));
+  const t0 = today();
+  const first = addDays(startOfWeek(t0), -77);
+  const days = [];
+  for (let d = first; d <= t0; d = addDays(d, 1)) {
+    const key = toKey(d), dow = isoDow(d);
+    const planned = habits.filter((h) => (h.days || []).includes(dow) && (!h.start || key >= h.start));
+    const done = planned.filter((h) => isDone(h.id, key)).length;
+    days.push({ d, key, planned: planned.length, done, plannedIds: planned.map((h) => h.id) });
+  }
+  const rate = (n) => {
+    const part = days.slice(-n); const p = part.reduce((a, x) => a + x.planned, 0);
+    return p ? Math.round(100 * part.reduce((a, x) => a + x.done, 0) / p) : null;
+  };
+  // serie: dni z planem, w których wszystko zrobione (dziś, jeśli jeszcze niezamknięte, nie przerywa serii)
+  let cur = 0, best = 0, run = 0;
+  for (const x of days) {
+    if (!x.planned) continue;
+    if (x.done === x.planned) { run++; best = Math.max(best, run); } else if (x.key !== toKey(t0)) run = 0;
+  }
+  for (let i = days.length - 1; i >= 0; i--) {
+    const x = days[i];
+    if (!x.planned) continue;
+    if (x.done === x.planned) cur++;
+    else if (x.key === toKey(t0)) continue;
+    else break;
+  }
+  // tygodnie
+  const weeks = [];
+  for (let w = 0; w < 12; w++) {
+    const part = days.slice(w * 7, w * 7 + 7);
+    const p = part.reduce((a, x) => a + x.planned, 0), dn = part.reduce((a, x) => a + x.done, 0);
+    weeks.push({ no: isoWeek(addDays(part[0].d, 3)), pct: p ? Math.round(100 * dn / p) : null });
+  }
+  // nawyki — 30 dni
+  const last30 = days.slice(-30);
+  const perHabit = habits.map((h) => {
+    let p = 0, dn = 0;
+    for (const x of last30) if (x.plannedIds.includes(h.id)) { p++; if (isDone(h.id, x.key)) dn++; }
+    return { name: h.name, pct: p ? Math.round(100 * dn / p) : null, done: dn, planned: p };
+  });
+  return { days, weeks, perHabit, cur, best, r7: rate(7), r30: rate(30) };
+}
+
+function renderStats() {
+  if (stats.loading || !stats.history) { el.statsBody.innerHTML = `<p class="index-empty">${t("statsLoading")}</p>`; return; }
+  if (!state.habits.some((h) => !isEvent(h))) { el.statsBody.innerHTML = `<p class="index-empty">${t("statsEmpty")}</p>`; return; }
+  const s = computeStats();
+  const pct = (v) => (v == null ? "—" : `${v}%`);
+  const kpi = (label, val, unit = "") => `<div class="kpi"><span class="kpi-label">${label}</span><span class="kpi-val">${val}${unit ? `<small>${unit}</small>` : ""}</span></div>`;
+
+  // wykres tygodniowy (słupki)
+  const W = isMobile() ? 340 : 600, H = isMobile() ? 190 : 200, padL = 34, padB = 26, padT = 18, bw = (W - padL) / 12;
+  const y = (v) => padT + (H - padT - padB) * (1 - v / 100);
+  let bars = [0, 50, 100].map((g) => `<line class="grid" x1="${padL}" x2="${W}" y1="${y(g)}" y2="${y(g)}"/><text class="axis" x="${padL - 6}" y="${y(g) + 4}" text-anchor="end">${g}%</text>`).join("");
+  s.weeks.forEach((w, i) => {
+    const x = padL + i * bw + bw * 0.18, bwi = bw * 0.64;
+    if (w.pct != null) {
+      const top = y(Math.max(w.pct, 1));
+      bars += `<rect class="bar${i === 11 ? " now" : ""}" x="${x.toFixed(1)}" y="${top.toFixed(1)}" width="${bwi.toFixed(1)}" height="${(y(0) - top).toFixed(1)}" rx="3"><title>${t("weekShort")}${w.no}: ${w.pct}%</title></rect>`;
+      if (i === 11 || i === 0 || w.pct === Math.max(...s.weeks.map((q) => q.pct ?? -1))) bars += `<text class="val" x="${(x + bwi / 2).toFixed(1)}" y="${(top - 6).toFixed(1)}" text-anchor="middle">${w.pct}%</text>`;
+    }
+    if (i % 2 === 1 || i === 11) bars += `<text class="axis" x="${(x + bwi / 2).toFixed(1)}" y="${H - 8}" text-anchor="middle">${t("weekShort")}${w.no}</text>`;
+  });
+  const weekly = `<svg class="chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t("chWeekly")}">${bars}</svg>`;
+
+  // mapa ciepła: 12 kolumn (tygodnie) × 7 wierszy (dni)
+  const cs = 18, gap = 4, lw = 22, hw = lw + 12 * (cs + gap), hh = 7 * (cs + gap);
+  const tKey = toKey(today());
+  let cells = N().letter.map((l, r) => (r % 2 === 0 ? `<text class="axis" x="0" y="${r * (cs + gap) + cs - 4}">${l}</text>` : "")).join("");
+  s.days.forEach((x, i) => {
+    const c = Math.floor(i / 7), r = i % 7;
+    const cx = lw + c * (cs + gap), cy = r * (cs + gap);
+    let cls = "cell empty";
+    if (x.planned) {
+      const ratio = x.done / x.planned;
+      cls = ratio === 0 ? "cell zero" : `cell l${ratio >= 1 ? 4 : ratio >= .66 ? 3 : ratio >= .33 ? 2 : 1}`;
+    }
+    if (x.key === tKey) cls += " today";
+    cells += `<rect class="${cls}" x="${cx}" y="${cy}" width="${cs}" height="${cs}" rx="3"><title>${x.d.getDate()} ${N().monShort[x.d.getMonth()]}: ${x.done}/${x.planned}</title></rect>`;
+  });
+  const legend = `<div class="heat-legend"><span>${t("less")}</span><i class="lg zero"></i><i class="lg l1"></i><i class="lg l2"></i><i class="lg l3"></i><i class="lg l4"></i><span>${t("more")}</span></div>`;
+  const heat = `<svg class="chart-svg heat" viewBox="0 0 ${hw} ${hh}" role="img" aria-label="${t("chHeat")}">${cells}</svg>${legend}`;
+
+  // nawyki — poziome paski
+  const hb = s.perHabit.map((h) => `<li class="hbar"><span class="hbar-name">${esc(h.name)}</span>
+      <span class="hbar-track"><span class="hbar-fill" style="width:${h.pct ?? 0}%"></span></span>
+      <span class="hbar-val">${pct(h.pct)}</span></li>`).join("");
+
+  el.statsBody.innerHTML = `
+    <div class="stats-kpis">
+      ${kpi(t("kStreak"), s.cur, t("daysUnit"))}
+      ${kpi(t("kBest"), s.best, t("daysUnit"))}
+      ${kpi(t("k7"), pct(s.r7))}
+      ${kpi(t("k30"), pct(s.r30))}
+    </div>
+    <div class="stats-charts">
+      <figure class="chart"><figcaption class="field-label">${t("chWeekly")}</figcaption>${weekly}</figure>
+      <figure class="chart"><figcaption class="field-label">${t("chHeat")}</figcaption>${heat}</figure>
+    </div>
+    <figure class="chart"><figcaption class="field-label">${t("chHabits")}</figcaption><ul class="hbars">${hb}</ul></figure>`;
 }
 
 // ---------- zmiana kolejności nawyków (przeciąganie) ----------
