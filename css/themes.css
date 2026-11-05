@@ -217,6 +217,7 @@
 [data-skin="szklo"] .index { margin-top: 40px; }
 [data-skin="szklo"] .index-row:last-child { border-bottom: 0; }
 [data-skin="szklo"] .nameplate { letter-spacing: -.045em; }
+[data-skin="szklo"] .deck { border-bottom: 0; padding-bottom: 0; }  /* bez podwójnej linii pod licznikiem */
 [data-skin="szklo"] .day.is-today .day-head { border-bottom-color: transparent; }
 [data-skin="szklo"] :is(.box, .oneoff-box) { border-color: rgba(11, 23, 48, .45); }
 [data-skin="szklo"][data-theme="dark"] :is(.box, .oneoff-box) { border-color: rgba(255, 255, 255, .45); }
