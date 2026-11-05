@@ -25,6 +25,10 @@ function tickIntro() {
   else { document.documentElement.classList.remove("intro"); motion.introStart = 0; }
 }
 
+// przewijanie programowe kart dnia (telefon) — patrz scrollToActive()
+let scrollTarget = null;
+let scrollTimer = 0;
+
 // ---------- stan ----------
 const state = {
   habits: [],
@@ -202,6 +206,7 @@ function renderWeek() {
   }).join("");
 
   el.week.scrollLeft = scroll;
+  if (scrollTarget != null) el.week.scrollTo({ left: scrollTarget, behavior: "smooth" });
   if (focusedKey) el.week.querySelector(`[data-k="${CSS.escape(focusedKey)}"]`)?.focus({ preventScroll: true });
 }
 
@@ -293,19 +298,33 @@ function goWeek(delta) {
 el.prev.addEventListener("click", () => goWeek(-1));
 el.next.addEventListener("click", () => goWeek(1));
 el.todayBtn.addEventListener("click", () => {
-  state.weekStart = startOfWeek(today());
+  const ws = startOfWeek(today());
+  const sameWeek = toKey(ws) === toKey(state.weekStart);
+  state.weekStart = ws;
   state.activeIdx = isoDow(today()) - 1;
-  subscribeWeek();
+  if (!sameWeek) subscribeWeek();   // ten sam tydzień — bez ponownego pobierania i przerysowania w trakcie przewijania
   render();
-  scrollToActive(true);
+  scrollToActive(sameWeek);
 });
 
 // ---------- widok jednego dnia (telefon) ----------
+// Przewijanie programowe: na czas ruchu wyłączamy przyciąganie kart (scroll-snap-stop zatrzymywało
+// przewijanie na pierwszej karcie po drodze) i ignorujemy zdarzenia scroll, które zmieniałyby aktywny dzień.
 function scrollToActive(smooth) {
   if (!isMobile()) return;
   const card = el.week.children[state.activeIdx];
   if (!card) return;
-  el.week.scrollTo({ left: card.offsetLeft - el.week.children[0].offsetLeft, behavior: smooth ? "smooth" : "auto" });
+  scrollTarget = card.offsetLeft - el.week.children[0].offsetLeft;
+  el.week.style.scrollSnapType = "none";
+  el.week.scrollTo({ left: scrollTarget, behavior: smooth ? "smooth" : "auto" });
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(finishScroll, smooth ? 700 : 30);
+}
+function finishScroll() {
+  if (scrollTarget == null) return;
+  el.week.scrollLeft = scrollTarget;   // na wypadek, gdyby ruch został przerwany
+  scrollTarget = null;
+  el.week.style.scrollSnapType = "";
 }
 
 el.strip.addEventListener("click", (e) => {
@@ -319,7 +338,7 @@ el.strip.addEventListener("click", (e) => {
 
 let scrollRaf = 0;
 el.week.addEventListener("scroll", () => {
-  if (!isMobile()) return;
+  if (!isMobile() || scrollTarget != null) return;
   cancelAnimationFrame(scrollRaf);
   scrollRaf = requestAnimationFrame(() => {
     const first = el.week.children[0];
