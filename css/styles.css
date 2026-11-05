@@ -1100,3 +1100,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .theme-toggle, .lang-toggle, .skin-toggle { top: max(calc(18px * var(--d, 1)), env(safe-area-inset-top)); }
   .issue-line { min-height: 45px; align-items: flex-start; padding-top: 10px; padding-bottom: 0; }
 }
+
+/* ---------- równe odstępy między sekcjami (wszystkie motywy) ----------
+   Każda sekcja ma odstęp tylko pod sobą (--sg); ukryte sekcje nic nie dodają.
+   Pas kart dnia ma własny dolny margines na cień (--wpb), więc go odejmujemy. */
+:root { --sg: 36px; --wpb: var(--shadow, 6px); }
+.masthead { margin-bottom: var(--sg); }
+.weekbar { margin: 0 0 var(--sg); }
+.strip { margin: 0 0 var(--sg); }
+.week { margin-bottom: max(0px, calc(var(--sg) - var(--wpb))); }
+.index, .index-events, .collapsible + .collapsible { margin-top: 0; margin-bottom: var(--sg); }
+.colophon { margin-top: 0; }
+@media (max-width: 760px) {
+  :root { --sg: calc(24px * var(--d, 1)); --wpb: 12px; }
+  .masthead { margin-bottom: var(--sg); }
+  .weekbar { margin: 0 0 var(--sg); }
+  .strip { margin: 0 0 var(--sg); }
+  .index, .index-events, .collapsible + .collapsible { margin-top: 0; margin-bottom: var(--sg); }
+  .colophon { margin-top: 0; }
+}

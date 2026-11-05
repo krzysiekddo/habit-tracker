@@ -216,7 +216,7 @@
   box-shadow: var(--shadow-xs);
 }
 [data-skin="szklo"] .masthead { padding-top: 12px; }
-[data-skin="szklo"] .index { margin-top: calc(28px * var(--d, 1)); }
+[data-skin="szklo"] :is(.index, .colophon) { margin-top: 0; }
 [data-skin="szklo"] { --panel-shadow: rgba(5, 15, 40, .07); }
 [data-skin="szklo"][data-theme="dark"] { --panel-shadow: rgba(0, 0, 0, .18); }
 [data-skin="szklo"] .index-row:last-child { border-bottom: 0; }
@@ -264,4 +264,4 @@
 
 /* Szkło: karty dnia z lekkim cieniem (duży cień był ucinany przez przewijany pas kart i tworzył ciemny pas) */
 [data-skin="szklo"] .day { box-shadow: var(--glass-edge), 0 4px 14px var(--panel-shadow); }
-@media (max-width: 760px) { [data-skin="szklo"] .week { padding-bottom: 18px; margin-bottom: -6px; } }
+@media (max-width: 760px) { [data-skin="szklo"] { --wpb: 14px; } [data-skin="szklo"] .week { padding-bottom: 14px; margin-bottom: max(0px, calc(var(--sg) - 14px)); } }
