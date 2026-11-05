@@ -1094,3 +1094,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .index-events .index-row .btn-sm { min-height: calc(38px * var(--de, 1)); padding: 0 calc(12px * var(--de, 1)); font-size: calc(12px * var(--de, 1)); }
   .index .index-head h2 { font-size: calc(32px * var(--df, 1) * var(--de, 1)); }
 }
+
+/* ikony (motyw / język / tryb) zawsze z małym odstępem od linii pod nimi */
+@media (max-width: 760px) {
+  .theme-toggle, .lang-toggle, .skin-toggle { top: max(calc(18px * var(--d, 1)), env(safe-area-inset-top)); }
+  .issue-line { min-height: 45px; align-items: flex-start; padding-top: 10px; padding-bottom: 0; }
+}
