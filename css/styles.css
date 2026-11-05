@@ -906,3 +906,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* sekcja wydarzeń pod spisem nawyków */
+.index-events { margin-top: 44px; }
+.index-events .index-head h2 { font-size: clamp(28px, 3.6vw, 44px); }
+@media (max-width: 760px) { .index-events .index-head .btn { display: inline-flex; } }

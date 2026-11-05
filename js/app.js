@@ -48,7 +48,7 @@ const el = {
   weekLabel: $("week-label"), weekRange: $("week-range"),
   prev: $("prev-week"), next: $("next-week"), todayBtn: $("today-btn"),
   add: $("add-btn"), add2: $("add-btn-2"), fab: $("fab"),
-  strip: $("strip"), week: $("week"), index: $("index-list"), modeNote: $("mode-note"),
+  strip: $("strip"), week: $("week"), index: $("index-list"), events: $("events-list"), eventsSection: $("events-section"), addEvent: $("add-event-btn"), modeNote: $("mode-note"),
   dialog: $("habit-dialog"), form: $("habit-form"), name: $("habit-name"),
   picker: $("days-picker"), kicker: $("dialog-kicker"), title: $("dialog-title"),
   close: $("dialog-close"), cancel: $("cancel-btn"), del: $("delete-btn"), formError: $("form-error"),
@@ -226,6 +226,8 @@ function renderStrip() {
 function renderIndex() {
   if (!state.habits.length) {
     el.index.innerHTML = `<li class="index-empty">${t("indexEmpty")}</li>`;
+    el.eventsSection.hidden = true;
+    el.events.innerHTML = "";
     return;
   }
   const habits = state.habits.filter((h) => !isEvent(h));
@@ -260,13 +262,11 @@ function renderIndex() {
     </li>`;
   };
 
-  let html = habits.map(habitRow).join("");
-  if (!habits.length) html += `<li class="index-empty">${t("noRecurring")}</li>`;
-  if (events.length) {
-    html += `<li class="index-sub">${t("events")}</li>`;
-    html += [...upcoming, ...past].map(eventRow).join("");
-  }
-  el.index.innerHTML = html;
+  el.index.innerHTML = habits.length
+    ? habits.map(habitRow).join("")
+    : `<li class="index-empty">${t("noRecurring")}</li>`;
+  el.eventsSection.hidden = !events.length;
+  el.events.innerHTML = [...upcoming, ...past].map(eventRow).join("");
 }
 
 // ---------- odhaczanie ----------
@@ -440,12 +440,14 @@ el.close.addEventListener("click", closeDialog);
 el.cancel.addEventListener("click", closeDialog);
 el.dialog.addEventListener("click", (e) => { if (e.target === el.dialog) closeDialog(); });
 
-el.index.addEventListener("click", (e) => {
+[el.index, el.events].forEach((list) => list.addEventListener("click", (e) => {
   const b = e.target.closest("[data-edit]");
   if (!b) return;
   const h = state.habits.find((x) => x.id === b.dataset.edit);
   if (h) openDialog(h);
-});
+}));
+// „+ Dodaj” w sekcji wydarzeń otwiera okno od razu w trybie wydarzenia
+el.addEvent.addEventListener("click", () => { openDialog(); el.oneoff.checked = true; syncDialogMode(); });
 
 el.form.addEventListener("submit", (e) => {
   e.preventDefault();
