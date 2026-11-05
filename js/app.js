@@ -460,6 +460,22 @@ document.addEventListener("visibilitychange", () => {
   document.addEventListener(t, (e) => e.preventDefault(), { passive: false })
 );
 
+// ---------- tryb ciemny ----------
+const themeBtn = document.getElementById("theme-toggle");
+const themeMeta = document.querySelector('meta[name="theme-color"]');
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  themeMeta?.setAttribute("content", t === "dark" ? "#000000" : "#ffffff");
+  themeBtn.setAttribute("aria-label", t === "dark" ? "Włącz tryb jasny" : "Włącz tryb ciemny");
+  themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+}
+applyTheme(document.documentElement.dataset.theme || "light");
+themeBtn.addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(next);
+  try { localStorage.setItem("habits:theme", next); } catch { /* ignoruj */ }
+});
+
 // ---------- PWA ----------
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});

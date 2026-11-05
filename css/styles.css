@@ -35,6 +35,15 @@
   --serif: "Young Serif", Georgia, "Times New Roman", serif;
   --sans: "Jost", "Futura", "Century Gothic", system-ui, sans-serif;
   color-scheme: light;
+  --veil: rgba(255, 255, 255, .82);
+}
+
+/* Tryb ciemny — odwrócone kolory */
+:root[data-theme="dark"] {
+  --ink: #fff;
+  --paper: #000;
+  --veil: rgba(0, 0, 0, .82);
+  color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -71,6 +80,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* ---------- Winieta / nagłówek ---------- */
 
 .masthead {
+  position: relative;
   text-align: center;
   padding-top: max(18px, env(safe-area-inset-top));
 }
@@ -108,6 +118,39 @@ button { font: inherit; color: inherit; cursor: pointer; }
   font-size: clamp(15px, 2vw, 20px);
 }
 .deck strong { font-family: var(--display); font-weight: 400; }
+
+/* ---------- Przełącznik motywu ---------- */
+
+.theme-toggle {
+  position: absolute;
+  right: 0;
+  top: calc(max(18px, env(safe-area-inset-top)) + 36px);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 46px; height: 46px;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--rule) solid var(--ink);
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.theme-toggle:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+.theme-toggle svg {
+  width: 22px; height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+.theme-toggle .icon-moon { fill: currentColor; }
+.theme-toggle .icon-sun circle { fill: currentColor; }
+.icon-sun { display: none; }
+:root[data-theme="dark"] .icon-sun { display: block; }
+:root[data-theme="dark"] .icon-moon { display: none; }
 
 /* ---------- Przyciski ---------- */
 
@@ -500,7 +543,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   overflow: auto;
 }
 .sheet::backdrop {
-  background: rgba(255, 255, 255, .82);
+  background: var(--veil);
   backdrop-filter: grayscale(1) blur(2px);
 }
 .sheet[open] { animation: sheet-in .18s ease-out; }
@@ -658,6 +701,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .issue-line { font-size: 9.5px; letter-spacing: .16em; }
   .issue-line #issue-kind { display: none; }
   .nameplate { padding-top: 8px; font-size: 64px; }
+  /* na telefonie przełącznik siedzi w górnej linii, obok daty */
+  .issue-line { justify-content: flex-start; align-items: center; gap: 16px; min-height: 34px; padding-right: 48px; padding-bottom: 6px; }
+  .theme-toggle { top: max(18px, env(safe-area-inset-top)); width: 32px; height: 32px; border-width: 2px; box-shadow: 3px 3px 0 var(--ink); }
+  .theme-toggle svg { width: 16px; height: 16px; stroke-width: 2.2; }
   .deck { font-size: 13px; padding: 5px 0 6px; border-bottom-width: 7px; }
   .weekbar h2 { font-size: 19px; line-height: 1.15; }
 
