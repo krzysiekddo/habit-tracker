@@ -121,7 +121,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* ---------- Przełącznik motywu ---------- */
 
-.theme-toggle {
+.theme-toggle, .lang-toggle {
   position: absolute;
   right: 0;
   top: calc(max(18px, env(safe-area-inset-top)) + 36px);
@@ -137,7 +137,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
   box-shadow: 4px 4px 0 var(--ink);
   transition: transform .08s ease, box-shadow .08s ease;
 }
-.theme-toggle:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+.theme-toggle:active, .lang-toggle:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+.lang-toggle {
+  right: 58px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .08em;
+}
 .theme-toggle svg {
   width: 22px; height: 22px;
   fill: none;
@@ -597,7 +604,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .days-picker {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
 }
 .day-toggle {
@@ -606,8 +613,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border: var(--rule) solid var(--ink);
   border-radius: 0;
   background: var(--paper);
+  min-width: 0;
+  padding: 0;
   font-family: var(--display);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
 }
 .day-toggle[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
@@ -703,7 +712,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .nameplate { padding-top: 8px; font-size: 64px; }
   /* na telefonie przełącznik siedzi w górnej linii, obok daty */
   .issue-line { justify-content: flex-start; align-items: center; gap: 16px; min-height: 34px; padding-right: 48px; padding-bottom: 6px; }
-  .theme-toggle { top: max(18px, env(safe-area-inset-top)); width: 32px; height: 32px; border-width: 2px; box-shadow: 3px 3px 0 var(--ink); }
+  .issue-line { padding-right: 92px; }
+  .theme-toggle, .lang-toggle { top: max(18px, env(safe-area-inset-top)); width: 32px; height: 32px; border-width: 2px; box-shadow: 3px 3px 0 var(--ink); }
+  .lang-toggle { right: 44px; font-size: 11px; }
   .theme-toggle svg { width: 16px; height: 16px; stroke-width: 2.2; }
   .deck { font-size: 13px; padding: 5px 0 6px; border-bottom-width: 7px; }
   .weekbar h2 { font-size: 19px; line-height: 1.15; }

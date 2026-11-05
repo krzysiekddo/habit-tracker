@@ -35,17 +35,12 @@ export function isoWeek(d) {
   return Math.ceil(((t - y0) / 86400000 + 1) / 7);
 }
 
-export const DOW_LONG = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"];
-export const DOW_SHORT = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
-export const DOW_LETTER = ["P", "W", "Ś", "C", "P", "S", "N"];
+import { N, lang } from "./i18n.js";
 
-const MONTH_GEN = ["stycznia", "lutego", "marca", "kwietnia", "maja", "czerwca", "lipca", "sierpnia", "września", "października", "listopada", "grudnia"];
-const MONTH_NOM = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
+export const monthGen = (d) => N().monGen[d.getMonth()];
+export const monthNom = (d) => N().monNom[d.getMonth()];
 
-export const monthGen = (d) => MONTH_GEN[d.getMonth()];
-export const monthNom = (d) => MONTH_NOM[d.getMonth()];
-
-/** "2 – 8 listopada 2026" albo "27 października – 2 listopada 2026" */
+/** PL: "2–8 listopada 2026" / EN: "2–8 November 2026" */
 export function rangeLabel(start) {
   const end = addDays(start, 6);
   const sameMonth = start.getMonth() === end.getMonth();

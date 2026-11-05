@@ -1,11 +1,11 @@
 import { firebaseConfig } from "./firebase-config.js";
 import {
   toKey, fromKey, today, addDays, startOfWeek, isoWeek, isoDow,
-  DOW_LONG, DOW_SHORT, DOW_LETTER, monthGen, monthNom, rangeLabel,
+  monthGen, monthNom, rangeLabel,
 } from "./dates.js";
+import { t, N, lang, setLang, applyStatic } from "./i18n.js";
 
 const useFirebase = Boolean(firebaseConfig.apiKey);
-const MONTH_SHORT = ["sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "paź", "lis", "gru"];
 const store = await import(useFirebase ? "./store-firebase.js" : "./store-local.js");
 
 // ---------- stan ----------
@@ -59,8 +59,9 @@ store.init((user) => {
     el.fab.hidden = false;
     el.signOut.hidden = !useFirebase;
     el.modeNote.textContent = useFirebase
-      ? `Zalogowano: ${user.email || user.displayName || "—"}`
-      : "Tryb lokalny — dane zapisują się tylko w tej przeglądarce.";
+      ? t("signedIn", { who: user.email || user.displayName || "—" })
+      : t("localMode");
+    state.user = user;
     start();
   } else {
     stop();
@@ -75,7 +76,7 @@ store.init((user) => {
 el.signIn.addEventListener("click", async () => {
   el.authError.textContent = "";
   try { await store.signIn(); }
-  catch (e) { el.authError.textContent = "Nie udało się zalogować. " + (e?.code || ""); }
+  catch (e) { el.authError.textContent = t("signInError") + (e?.code || ""); }
 });
 el.signOut.addEventListener("click", () => store.signOut());
 
@@ -102,24 +103,24 @@ function subscribeWeek() {
 // ---------- render ----------
 function renderHeader() {
   const thu = addDays(state.weekStart, 3);
-  el.issueNo.textContent = `Nr ${isoWeek(thu)}`;
+  el.issueNo.textContent = t("issueNo", { n: isoWeek(thu) });
   el.issueDate.textContent = `${monthNom(thu)} ${thu.getFullYear()}`;
   el.weekRange.textContent = rangeLabel(state.weekStart);
 
   const diff = Math.round((state.weekStart - startOfWeek(today())) / (7 * 86400000));
   el.weekLabel.textContent =
-    diff === 0 ? "Ten tydzień" :
-    diff === -1 ? "Poprzedni tydzień" :
-    diff === 1 ? "Następny tydzień" :
-    `Tydzień ${isoWeek(thu)}`;
+    diff === 0 ? t("thisWeek") :
+    diff === -1 ? t("lastWeek") :
+    diff === 1 ? t("nextWeek") :
+    t("weekN", { n: isoWeek(thu) });
   el.todayBtn.disabled = diff === 0 && state.activeIdx === isoDow(today()) - 1;
 
   // postęp tygodnia pod winietą
   let done = 0, total = 0;
   for (const d of weekDates()) { const st = dayStats(d); done += st.done; total += st.total; }
   el.progress.innerHTML = total
-    ? `${esc(el.weekLabel.textContent)}: <strong>${done}</strong> z <strong>${total}</strong> wykonane`
-    : `${esc(el.weekLabel.textContent)}: brak zaplanowanych nawyków`;
+    ? t("progress", { label: esc(el.weekLabel.textContent), done, total })
+    : t("progressNone", { label: esc(el.weekLabel.textContent) });
 }
 
 function render() {
@@ -151,17 +152,17 @@ function renderWeek() {
       const k = `${h.id}|${key}`;
       const on = state.done.has(k);
       return `<li><button class="habit" type="button" aria-pressed="${on}" data-k="${esc(k)}">
-        <span class="box" aria-hidden="true"></span><span class="habit-name">${esc(h.name)}${isEvent(h) ? `<span class="habit-tag">Wydarzenie</span>` : ""}</span></button></li>`;
+        <span class="box" aria-hidden="true"></span><span class="habit-name">${esc(h.name)}${isEvent(h) ? `<span class="habit-tag">${t("eventTag")}</span>` : ""}</span></button></li>`;
     }).join("");
 
-    return `<section class="${cls.join(" ")}" data-idx="${i}" aria-label="${DOW_LONG[i]} ${d.getDate()} ${monthGen(d)}">
+    return `<section class="${cls.join(" ")}" data-idx="${i}" aria-label="${N().long[i]} ${d.getDate()} ${monthGen(d)}">
       <header class="day-head">
-        <span class="day-dow">${DOW_LONG[i]}</span>
+        <span class="day-dow">${N().long[i]}</span>
         <span class="day-num">${d.getDate()}</span>
         <span class="day-month">${monthGen(d)}</span>
         ${total ? `<span class="day-count">${done}/${total}</span>` : ""}
       </header>
-      ${total ? `<ul class="habits">${items}</ul>` : `<p class="day-empty">${state.habits.length ? "Dzień wolny." : "Brak nawyków."}</p>`}
+      ${total ? `<ul class="habits">${items}</ul>` : `<p class="day-empty">${state.habits.length ? t("dayOff") : t("noHabits")}</p>`}
     </section>`;
   }).join("");
 
@@ -177,14 +178,14 @@ function renderStrip() {
     if (key === tKey) cls.push("is-today");
     if (total && done === total) cls.push("is-complete");
     return `<button class="${cls.join(" ")}" type="button" role="tab" data-idx="${i}" aria-selected="${i === state.activeIdx}"
-      aria-label="${DOW_LONG[i]} ${d.getDate()}">
-      <span class="strip-dow">${DOW_SHORT[i]}</span><span class="strip-num">${d.getDate()}</span></button>`;
+      aria-label="${N().long[i]} ${d.getDate()}">
+      <span class="strip-dow">${N().short[i]}</span><span class="strip-num">${d.getDate()}</span></button>`;
   }).join("");
 }
 
 function renderIndex() {
   if (!state.habits.length) {
-    el.index.innerHTML = `<li class="index-empty">Spis jest pusty. Dodaj pierwszy nawyk — wystarczy nazwa i dni.</li>`;
+    el.index.innerHTML = `<li class="index-empty">${t("indexEmpty")}</li>`;
     return;
   }
   const habits = state.habits.filter((h) => !isEvent(h));
@@ -198,27 +199,27 @@ function renderIndex() {
     <li class="index-row">
       <span class="index-no">${String(i + 1).padStart(2, "0")}</span>
       <span class="index-name">${esc(h.name)}</span>
-      <span class="index-days" aria-label="Dni: ${h.days.map((d) => DOW_SHORT[d - 1]).join(", ")}">
-        ${DOW_LETTER.map((l, j) => `<span class="${h.days.includes(j + 1) ? "on" : "off"}" aria-hidden="true">${l}</span>`).join("")}
+      <span class="index-days" aria-label="${t("daysAria", { d: h.days.map((d) => N().short[d - 1]).join(", ") })}">
+        ${N().letter.map((l, j) => `<span class="${h.days.includes(j + 1) ? "on" : "off"}" aria-hidden="true">${l}</span>`).join("")}
       </span>
-      <button class="btn btn-sm" type="button" data-edit="${esc(h.id)}">Edytuj</button>
+      <button class="btn btn-sm" type="button" data-edit="${esc(h.id)}">${t("edit")}</button>
     </li>`;
 
   const eventRow = (h) => {
     const d = fromKey(h.date);
     return `
     <li class="index-row ${h.date < tKey ? "is-past" : ""}">
-      <span class="index-no index-date"><b>${d.getDate()}</b>${MONTH_SHORT[d.getMonth()]}</span>
+      <span class="index-no index-date"><b>${d.getDate()}</b>${N().monShort[d.getMonth()]}</span>
       <span class="index-name">${esc(h.name)}</span>
-      <span class="index-when">${DOW_LONG[isoDow(d) - 1]}${d.getFullYear() !== today().getFullYear() ? " " + d.getFullYear() : ""}</span>
-      <button class="btn btn-sm" type="button" data-edit="${esc(h.id)}">Edytuj</button>
+      <span class="index-when">${N().long[isoDow(d) - 1]}${d.getFullYear() !== today().getFullYear() ? " " + d.getFullYear() : ""}</span>
+      <button class="btn btn-sm" type="button" data-edit="${esc(h.id)}">${t("edit")}</button>
     </li>`;
   };
 
   let html = habits.map(habitRow).join("");
-  if (!habits.length) html += `<li class="index-empty">Brak stałych nawyków.</li>`;
+  if (!habits.length) html += `<li class="index-empty">${t("noRecurring")}</li>`;
   if (events.length) {
-    html += `<li class="index-sub">Wydarzenia</li>`;
+    html += `<li class="index-sub">${t("events")}</li>`;
     html += [...upcoming, ...past].map(eventRow).join("");
   }
   el.index.innerHTML = html;
@@ -315,8 +316,8 @@ mobileMq.addEventListener("change", () => scrollToActive(false));
 let pickedDays = new Set();
 
 function renderPicker() {
-  el.picker.innerHTML = DOW_SHORT.map((l, i) =>
-    `<button type="button" class="day-toggle" data-d="${i + 1}" aria-pressed="${pickedDays.has(i + 1)}" aria-label="${DOW_LONG[i]}">${l}</button>`
+  el.picker.innerHTML = N().short.map((l, i) =>
+    `<button type="button" class="day-toggle" data-d="${i + 1}" aria-pressed="${pickedDays.has(i + 1)}" aria-label="${N().long[i]}">${l}</button>`
   ).join("");
 }
 
@@ -348,11 +349,11 @@ function syncDialogMode() {
   const editing = Boolean(state.editingId);
   el.dateField.hidden = !ev;
   el.daysField.hidden = ev;
-  el.kicker.textContent = editing ? "Korekta" : ev ? "Jednorazowo" : "Nowa rubryka";
+  el.kicker.textContent = editing ? t("kickerEdit") : ev ? t("kickerOnce") : t("kickerNew");
   el.title.textContent = editing
-    ? (ev ? "Edytuj wydarzenie" : "Edytuj nawyk")
-    : (ev ? "Dodaj wydarzenie" : "Dodaj nawyk");
-  el.name.placeholder = ev ? "np. Wizyta u dentysty" : "np. Poranny spacer";
+    ? (ev ? t("titleEditEvent") : t("titleEditHabit"))
+    : (ev ? t("titleAddEvent") : t("titleAddHabit"));
+  el.name.placeholder = ev ? t("phEvent") : t("phHabit");
   el.formError.textContent = "";
 }
 el.oneoff.addEventListener("change", syncDialogMode);
@@ -392,9 +393,9 @@ el.form.addEventListener("submit", (e) => {
   const name = el.name.value.trim().replace(/\s+/g, " ");
   const ev = el.oneoff.checked;
   const days = [...pickedDays].sort((a, b) => a - b);
-  if (!name) { el.formError.textContent = ev ? "Nadaj wydarzeniu nazwę." : "Nadaj nawykowi nazwę."; el.name.focus(); return; }
-  if (ev && !/^\d{4}-\d{2}-\d{2}$/.test(el.date.value)) { el.formError.textContent = "Wybierz datę wydarzenia."; return; }
-  if (!ev && !days.length) { el.formError.textContent = "Wybierz przynajmniej jeden dzień."; return; }
+  if (!name) { el.formError.textContent = ev ? t("errNameEvent") : t("errNameHabit"); el.name.focus(); return; }
+  if (ev && !/^\d{4}-\d{2}-\d{2}$/.test(el.date.value)) { el.formError.textContent = t("errDate"); return; }
+  if (!ev && !days.length) { el.formError.textContent = t("errDays"); return; }
 
   const fields = ev
     ? { name, date: el.date.value, days: [] }
@@ -425,12 +426,12 @@ let armTimer = 0;
 function disarmDelete() {
   clearTimeout(armTimer);
   el.del.classList.remove("armed");
-  el.del.textContent = "Usuń";
+  el.del.textContent = t("del");
 }
 el.del.addEventListener("click", () => {
   if (!el.del.classList.contains("armed")) {
     el.del.classList.add("armed");
-    el.del.textContent = "Na pewno?";
+    el.del.textContent = t("delSure");
     armTimer = setTimeout(disarmDelete, 3000);
     return;
   }
@@ -463,11 +464,11 @@ document.addEventListener("visibilitychange", () => {
 // ---------- tryb ciemny ----------
 const themeBtn = document.getElementById("theme-toggle");
 const themeMeta = document.querySelector('meta[name="theme-color"]');
-function applyTheme(t) {
-  document.documentElement.dataset.theme = t;
-  themeMeta?.setAttribute("content", t === "dark" ? "#000000" : "#ffffff");
-  themeBtn.setAttribute("aria-label", t === "dark" ? "Włącz tryb jasny" : "Włącz tryb ciemny");
-  themeBtn.setAttribute("aria-pressed", String(t === "dark"));
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  themeMeta?.setAttribute("content", theme === "dark" ? "#000000" : "#ffffff");
+  themeBtn.setAttribute("aria-label", theme === "dark" ? t("toLight") : t("toDark"));
+  themeBtn.setAttribute("aria-pressed", String(theme === "dark"));
 }
 applyTheme(document.documentElement.dataset.theme || "light");
 themeBtn.addEventListener("click", () => {
@@ -475,6 +476,25 @@ themeBtn.addEventListener("click", () => {
   applyTheme(next);
   try { localStorage.setItem("habits:theme", next); } catch { /* ignoruj */ }
 });
+
+// ---------- język ----------
+const langBtn = document.getElementById("lang-toggle");
+function refreshLang() {
+  applyStatic();
+  langBtn.textContent = t("langBtn");
+  langBtn.setAttribute("aria-label", t("langAria"));
+  applyTheme(document.documentElement.dataset.theme || "light");
+  if (state.user) el.modeNote.textContent = useFirebase
+    ? t("signedIn", { who: state.user.email || state.user.displayName || "—" })
+    : t("localMode");
+  if (el.dialog.open) { syncDialogMode(); if (el.del.classList.contains("armed")) el.del.textContent = t("delSure"); else el.del.textContent = t("del"); renderPicker(); }
+  render();
+}
+langBtn.addEventListener("click", () => {
+  setLang(document.documentElement.lang === "pl" ? "en" : "pl");
+  refreshLang();
+});
+refreshLang();
 
 // ---------- PWA ----------
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
