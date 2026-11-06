@@ -96,7 +96,18 @@
         <ol class="index-list" id="events-list"></ol>
       </section>
 
-      <section class="index collapsible" style="--i:11" id="habits-section" aria-labelledby="index-title">
+      <section class="index index-todos" style="--i:11" id="todos-section" aria-labelledby="todos-title">
+        <div class="index-head">
+          <h2 id="todos-title" data-i18n="todoTitle">Do zrobienia</h2>
+        </div>
+        <form class="todo-add" id="todo-form" autocomplete="off">
+          <input id="todo-input" type="text" maxlength="120" placeholder="Dodaj zadanie…" data-i18n-ph="todoPh" aria-label="Dodaj zadanie" data-i18n-aria="todoPh">
+          <button class="btn btn-sm" type="submit" aria-label="Dodaj" data-i18n-aria="todoAdd">+</button>
+        </form>
+        <ul class="todo-list" id="todo-list"></ul>
+      </section>
+
+      <section class="index collapsible" style="--i:12" id="habits-section" aria-labelledby="index-title">
         <div class="index-head">
           <h2 id="index-title"><button class="collapse-toggle" id="habits-toggle" type="button" aria-expanded="false" aria-controls="habits-body"><span data-i18n="indexTitle">Spis nawyków</span><span class="collapse-count" id="habits-count"></span><span class="chev" aria-hidden="true"></span></button></h2>
           <button class="btn btn-sm" id="add-btn-2" type="button" data-i18n="add">+ Dodaj</button>
@@ -106,7 +117,7 @@
         </div>
       </section>
 
-      <section class="index collapsible index-stats" style="--i:12" id="stats-section" aria-labelledby="stats-title">
+      <section class="index collapsible index-stats" style="--i:13" id="stats-section" aria-labelledby="stats-title">
         <div class="index-head">
           <h2 id="stats-title"><button class="collapse-toggle" id="stats-toggle" type="button" aria-expanded="false" aria-controls="stats-body"><span data-i18n="statsTitle">Statystyki</span><span class="chev" aria-hidden="true"></span></button></h2>
         </div>

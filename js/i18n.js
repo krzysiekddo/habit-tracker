@@ -51,6 +51,7 @@ const STR = {
     toLight: "Włącz tryb jasny", toDark: "Włącz tryb ciemny",
     langBtn: "EN", langAria: "Switch to English",
     skinAria: "Wybierz motyw", skinKicker: "Wygląd", skinTitle: "Motyw", skinSample: "Spacer",
+    todoTitle: "Do zrobienia", todoPh: "Dodaj zadanie…", todoEmpty: "Nic do zrobienia.", todoAdd: "Dodaj",
     densLabel: "Układ", densCompact: "Zwarty", densLoose: "Luźny",
     hueLabel: "Kolor", glassLabel: "Przezroczystość szkła",
     statsTitle: "Statystyki", statsEmpty: "Dodaj nawyki, żeby zobaczyć statystyki.", statsLoading: "Wczytywanie…",
@@ -87,6 +88,7 @@ const STR = {
     toLight: "Switch to light mode", toDark: "Switch to dark mode",
     langBtn: "PL", langAria: "Przełącz na polski",
     skinAria: "Choose theme", skinKicker: "Appearance", skinTitle: "Theme", skinSample: "Walk",
+    todoTitle: "To do", todoPh: "Add a task…", todoEmpty: "Nothing to do.", todoAdd: "Add",
     densLabel: "Layout", densCompact: "Compact", densLoose: "Spacious",
     hueLabel: "Color", glassLabel: "Glass transparency",
     statsTitle: "Statistics", statsEmpty: "Add habits to see statistics.", statsLoading: "Loading…",
@@ -126,5 +128,6 @@ export function setLang(next) {
 export function applyStatic(root = document) {
   root.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
   root.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+  root.querySelectorAll("[data-i18n-ph]").forEach((el) => { el.setAttribute("placeholder", t(el.dataset.i18nPh)); });
   root.querySelectorAll("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
 }

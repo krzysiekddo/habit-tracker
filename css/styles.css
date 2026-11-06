@@ -1134,3 +1134,44 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .skin-sample { font-size: 24px; }
   .skin-desc { display: none; }
 }
+
+/* ---------- szybkie zadania ---------- */
+.todo-add {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0 4px;
+}
+.todo-add input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 2px;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--rule) solid var(--line);
+  border-radius: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+}
+.todo-add input::placeholder { color: var(--ink); opacity: .4; }
+.todo-add input:focus { outline: none; border-bottom-width: calc(var(--rule) + 2px); }
+.todo-add .btn { width: 40px; padding: 0; font-size: 22px; letter-spacing: 0; }
+.todo-list { list-style: none; margin: 0; padding: 0; }
+.todo-list .habit { padding-left: 0; padding-right: 0; }
+.todo-list li + li .habit { border-top: 1px solid var(--line); }
+.todo-empty { padding: 12px 0 4px; font-family: var(--serif); font-style: italic; opacity: .7; }
+.todo-item.is-leaving {
+  animation: todo-out .3s ease-in forwards;
+  animation-delay: calc(var(--anim-shift, 0ms) + 560ms);
+  overflow: hidden;
+}
+@keyframes todo-out {
+  from { max-height: 120px; opacity: 1; }
+  to   { max-height: 0; opacity: 0; transform: translateX(16px); }
+}
+.todo-list .is-new { animation: var(--new-anim) backwards; animation-delay: var(--anim-shift, 0ms); }
+@media (max-width: 760px) {
+  .todo-add input { font-size: calc(16px * var(--df, 1)); }
+  .todo-list .habit { min-height: calc(40px * var(--d, 1)); padding-top: calc(8px * var(--d, 1)); padding-bottom: calc(8px * var(--d, 1)); }
+}

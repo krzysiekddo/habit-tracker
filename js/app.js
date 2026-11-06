@@ -46,6 +46,9 @@ const state = {
   editingId: null,
 };
 let unsubHabits = null;
+let unsubTodos = null;
+let todos = [];
+const leavingTodos = new Map();   // id -> czas odhaczenia (animacja przed zniknięciem)
 let unsubDone = null;
 
 // ---------- elementy ----------
@@ -56,6 +59,7 @@ const el = {
   weekLabel: $("week-label"), weekRange: $("week-range"),
   prev: $("prev-week"), next: $("next-week"), todayBtn: $("today-btn"),
   add: $("add-btn"), add2: $("add-btn-2"), fab: $("fab"),
+  todoForm: $("todo-form"), todoInput: $("todo-input"), todoList: $("todo-list"),
   habitsToggle: $("habits-toggle"), habitsBody: $("habits-body"), habitsCount: $("habits-count"),
   statsToggle: $("stats-toggle"), statsBody: $("stats-body"),
   strip: $("strip"), week: $("week"), index: $("index-list"), events: $("events-list"), eventsSection: $("events-section"), addEvent: $("add-event-btn"), modeNote: $("mode-note"),
@@ -135,11 +139,20 @@ function start() {
     render();
   });
   subscribeWeek();
+  unsubTodos?.();
+  let knownTodos = null;
+  unsubTodos = store.watchTodos((list) => {
+    if (knownTodos) for (const x of list) if (!knownTodos.has(x.id)) motion.fresh.set(x.id, now());
+    knownTodos = new Set(list.map((x) => x.id));
+    todos = list;
+    renderTodos();
+  });
   renderHeader();
   requestAnimationFrame(() => scrollToActive(false));
 }
 
 function stop() {
+  unsubTodos?.(); unsubTodos = null;
   unsubHabits?.(); unsubHabits = null;
   unsubDone?.(); unsubDone = null;
 }
@@ -289,6 +302,43 @@ function renderIndex() {
   el.eventsSection.hidden = !events.length;
   el.events.innerHTML = [...upcoming, ...past].map(eventRow).join("");
 }
+
+// ---------- szybkie zadania ----------
+function renderTodos() {
+  const ids = new Set(todos.map((x) => x.id));
+  for (const id of leavingTodos.keys()) if (!ids.has(id)) leavingTodos.delete(id);
+  if (!todos.length) { el.todoList.innerHTML = `<li class="todo-empty">${t("todoEmpty")}</li>`; return; }
+  el.todoList.innerHTML = todos.map((x) => {
+    const t0 = leavingTodos.get(x.id);
+    const shift = t0 != null ? shiftFor(t0, 900) : null;
+    const fresh = motion.fresh.has(x.id) ? shiftFor(motion.fresh.get(x.id), 1200) : null;
+    const liCls = ["todo-item"];
+    if (t0 != null) liCls.push("is-leaving");
+    if (fresh) liCls.push("is-new");
+    const style = t0 != null ? ` style="--anim-shift:${shift ?? "-900ms"}"` : fresh ? ` style="--anim-shift:${fresh}"` : "";
+    return `<li class="${liCls.join(" ")}"${style}><button class="habit${t0 != null ? " just-checked" : ""}" type="button" aria-pressed="${t0 != null}" data-todo="${esc(x.id)}"${t0 != null ? ` style="--anim-shift:${shift ?? "-900ms"}"` : ""}>
+      <span class="box" aria-hidden="true"></span><span class="habit-name"><span class="habit-text">${esc(x.text)}</span></span></button></li>`;
+  }).join("");
+}
+el.todoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = el.todoInput.value.trim().replace(/\s+/g, " ");
+  if (!text) return;
+  el.todoInput.value = "";
+  Promise.resolve(store.addTodo(text)).catch((err) => console.error("Zapis zadania nieudany", err));
+});
+el.todoList.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-todo]");
+  if (!b) return;
+  const id = b.dataset.todo;
+  if (leavingTodos.has(id)) return;
+  leavingTodos.set(id, now());
+  if (navigator.vibrate && isMobile()) navigator.vibrate(8);
+  renderTodos();
+  setTimeout(() => {
+    Promise.resolve(store.completeTodo(id)).catch((err) => { console.error("Usunięcie zadania nieudane", err); leavingTodos.delete(id); renderTodos(); });
+  }, 850);
+});
 
 // ---------- sekcje zwijane ----------
 function setupCollapse(toggle, body, onOpen) {
@@ -927,6 +977,7 @@ function refreshLang() {
     ? t("signedIn", { who: state.user.email || state.user.displayName || "—" })
     : t("localMode");
   if (skinDialog.open) renderSkins();
+  renderTodos();
   if (el.dialog.open) { syncDialogMode(); if (el.del.classList.contains("armed")) el.del.textContent = t("delSure"); else el.del.textContent = t("del"); renderPicker(); }
   render();
 }

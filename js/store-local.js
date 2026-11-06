@@ -7,10 +7,10 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const d = JSON.parse(raw);
-      return { habits: d.habits || [], done: d.done || {} };
+      return { habits: d.habits || [], done: d.done || {}, todos: d.todos || [] };
     }
   } catch { /* brak dostępu do pamięci — działamy w RAM */ }
-  return { habits: [], done: {} };
+  return { habits: [], done: {}, todos: [] };
 }
 
 let data = load();
@@ -22,7 +22,11 @@ function save() {
   emit();
 }
 
+const todoListeners = new Set();
+function emitTodos() { const list = [...data.todos]; todoListeners.forEach((cb) => cb(list)); }
+
 function emit() {
+  emitTodos();
   const habits = [...data.habits].sort((a, b) => a.order - b.order);
   habitListeners.forEach((cb) => cb(habits));
   doneListeners.forEach((l) => l.cb(doneSet(l.from, l.to)));
@@ -93,5 +97,20 @@ export async function deleteHabit(id) {
 export async function setDone(habitId, date, done) {
   const k = `${habitId}|${date}`;
   if (done) data.done[k] = 1; else delete data.done[k];
+  save();
+}
+
+// ---------- szybkie zadania (jednorazowe: odhaczenie = usunięcie) ----------
+export function watchTodos(cb) {
+  todoListeners.add(cb);
+  cb([...data.todos]);
+  return () => todoListeners.delete(cb);
+}
+export async function addTodo(text) {
+  data.todos.push({ id: uid(), text, created: Date.now() });
+  save();
+}
+export async function completeTodo(id) {
+  data.todos = data.todos.filter((x) => x.id !== id);
   save();
 }

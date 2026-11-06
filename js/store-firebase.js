@@ -117,3 +117,19 @@ export function setDone(habitId, date, done) {
   const ref = doc(doneCol(), `${habitId}_${date}`);
   return done ? setDoc(ref, { habitId, date }) : deleteDoc(ref);
 }
+
+// ---------- szybkie zadania: users/{uid}/todos/{id} { text, created } ----------
+const todosCol = () => collection(db, "users", user.uid, "todos");
+export function watchTodos(cb) {
+  return onSnapshot(todosCol(), (snap) => {
+    const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    list.sort((a, b) => (a.created ?? 0) - (b.created ?? 0));
+    cb(list);
+  });
+}
+export function addTodo(text) {
+  return setDoc(doc(todosCol()), { text, created: Date.now() });
+}
+export function completeTodo(id) {
+  return deleteDoc(doc(todosCol(), id));
+}
